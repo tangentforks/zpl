@@ -1,0 +1,17 @@
+#
+# etc/mpi/sp2/Macros - sp2 mpi macros
+#
+
+CC=${CC:-mpcc}
+CCVER=${CCVER:-"echo version number unknown"}
+LFLAGS=${LFLAGS-'-lm'}
+
+START_CC=${START_CC:-cc}
+START_CCVER=${START_CCVER:-"echo version number unknown"}
+
+START_LINK=${START_LINK:-cc}
+
+. $ZPLHOME/etc/mpi/Macros
+
+FILE3=no
+

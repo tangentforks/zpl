@@ -1,0 +1,6 @@
+#
+# etc/mpi-lam/powerpc-macosx/Macros - Makefile macros
+#
+
+ARC=${ARC:-"ar rcs"}
+. "$ZPLHOME/etc/mpi-lam/Macros"

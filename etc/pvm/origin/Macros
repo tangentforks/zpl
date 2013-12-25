@@ -1,0 +1,13 @@
+#!/bin/sh
+
+MD_LIBS=${MD_LIBS:-"-lpvm3"}
+
+. $ZPLHOME/etc/pvm/Macros
+
+
+CCVER="echo version number unknown -- check IRIX version"
+
+CFLAGS="$CFLAGS -64 -D_QUAD_SUPPORTED"
+START_CFLAGS="$START_CFLAGS -64 -D_QUAD_SUPPORTED"
+LFLAGS="$LFLAGS -64"
+START_LFLAGS="$START_LFLAGS -64"

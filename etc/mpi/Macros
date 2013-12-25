@@ -1,0 +1,7 @@
+#
+# etc/mpi/Macros - mpi Makefile macros
+#
+
+. $ZPLHOME/etc/Macros
+
+FILE3=yes

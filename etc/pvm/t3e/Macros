@@ -1,0 +1,16 @@
+#
+# etc/pvm/t3e/Makefile - t3e pvm Makefile macros
+#
+
+MAKEDEPEND_PRE="cc -M"
+MAKEDEPEND_POST="> Makefile.depend"
+
+. $ZPLHOME/etc/pvm/Macros
+
+MD_LIB_INCLS=""
+MD_LIBPATHS=""
+MD_LIBS=""
+
+START_MD_LIBS=""
+
+FILE3=no 

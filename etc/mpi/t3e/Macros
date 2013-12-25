@@ -1,0 +1,10 @@
+#
+# etc/mpi/t3e/Macros - t3e mpi Makefile macros
+#
+
+MAKEDEPEND_PRE="cc -M"
+MAKEDEPEND_POST="> Makefile.depend"
+
+. $ZPLHOME/etc/mpi/Macros
+
+FILE3=no

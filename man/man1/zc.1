@@ -1,0 +1,216 @@
+.TH zc 1
+.SH NAME
+.B zc
+\- The ZPL compiler.
+.SH SYNOPSIS
+.TP
+\fIzc \fP    [-cpp]   [-d \fIdirectory\fP]   [-D\fIname\fP]   [-D\fIname\fP=\fIdef\fP]
+[-fusion[\fIn\fP]] [-g] [-h] [-helppar] [-I\fIdirectory\fP]
+[-l\fIlib\fP] [-L\fIdirectory\fP] [-noaccessopt] [-nobuild]
+[-nocheck] [-nocommopt] [-noconstopt] [-nocontract] [-nofloodopt] 
+[-noregopt] [-nostrength] [-notile] [-o \fIoutput\fP] [-O[\fIn\fP]]
+[-savec] [-stencil=\fItype\fP] [-U\fIname\fP] [-v] [-verbose] [-V]
+[\fIC files\fP] [\fIobject files\fP] [\fIheader files\fP] \fIZPL file\fP
+.SH DESCRIPTION
+\fBzc\fP is the compiler for the ZPL data parallel array language.
+\fBzc\fP requires a single ZPL source file (identified using a \fB.z\fP 
+extension).
+
+.SH FLAGS
+.TP
+.B \-cpp
+Use \fBcpp\fP to preprocess the ZPL source file.  \fBcpp\fP does not
+run by default.
+.TP
+.B \-d \fIdirectory\fP
+Specify the directory in which to place the generated C code.  Use
+this in conjunction with \fB-savec\fP to save the generated ANSI C
+code.
+.TP
+.B \-D\fIname\fP
+.TP
+.B \-D\fIname\fP\fP=\fP\fIdef\fP
+Preprocessor flag, passed directly to \fBcpp\fP.
+.TP
+.B \-fusion\fP[\fIn\fP]
+Enable array loop fusion.  When no value is specified for \fIn\fP, the
+compiler performs full fusion (\fB-fusion3\fP).
+.RS
+.IP 0 5
+No array loop fusion.
+.IP 1
+Enable fusion for compiler temporaries.
+.IP 2
+Enable fusion for compiler temporaries and contraction.
+.IP 3
+Enable fusion for compiler temporaries, contraction and locality
+(default).
+.RE
+.TP
+.B \-g
+Generate debug symbols, line mappings, and support for zgdb and GUARD.
+.TP
+.B \-h
+Display usage information.
+.TP
+.B \-helppar
+Indicate why each parallel procedure is classified as such.
+.TP
+.B \-I\fIdirectory\fP
+Add \fIdirectory\fP to the search path for \fB#include\fP files.  This
+directory is added to the search path for all invocations of \fBcpp\fP,
+including those used when compiling zc-produced C files.
+.TP
+.B \-l\fIlib\fP
+Use \fBlib\fP\fIlib\fP\fB.a\fP during object code linking for final binary.
+.TP
+.B \-L\fIdirectory\fP
+Add \fIdirectory\fP to the search path for link time libraries while
+building the final binary.
+.TP
+.B \-noaccessopt
+Disable efficient array access.
+.TP
+.B \-nobuild
+Do not build the final binary.  \fB-nobuild\fP requires \fB-savec\fP
+and \fB-d\fP.
+.TP
+.B \-nocheck
+Disable typechecking (not recommended).
+.TP
+.B \-nocommopt
+Disable communication optimizations.
+.TP
+.B \-noconstopt
+Disable evaluation of constant initializers.
+.TP
+.B \-nocontract
+Disable array contraction.
+.TP
+.B \-nofloodopt
+Disable hoisting of loop-invariant flood expressions.
+.TP
+.B \-noregopt
+Disable reordering of loops used to implement array statements.
+.TP
+.B \-nostrength
+Disable strength reduction optimizations.
+.TP
+.B \-notile
+Disable tiling of loops used to implement array statements.
+.TP
+.B \-o \fIoutput\fP
+Name the final binary \fIoutput\fP.  If this flag is not used, the
+name of the binary is that of the base name of the original input file.
+.TP
+.B \-O\fP[\fIn\fP]
+Set the optimization level.  When no value is specified for \fIn\fP,
+the compiler performs full optimizations (\fB-O1\fP).
+.RS
+.IP 0 5
+Disable all optimizations.  Same as \fB-fusion0\fP,
+\fB-noaccessopt\fP, \fB-nocommopt\fP, \fB-noconstopt\fP,
+\fB-nocontract\fP, \fB-nostrength\fP, \fB-noregopt\fP,
+\fB-notile\fP, \fB-nofloodopt\fP, and \fB-stencil=none\fP.
+.IP 1
+Enable all optimizations (default).
+.RE
+.TP
+.B \-savec
+Save the generated C code.  When using \fB-savec\fP, an output
+directory must be specified with the \fB-d\fP flag.
+.TP
+.B \-stencil=\fP[\fItype\fP]
+Specify how to optimize stencil-style array expressions.
+.RS
+.IP none 10
+Disable stencil optimizations.
+.IP scalar
+Optimize stencils by inserting scalar temporaries.
+.IP unroll
+Same as scalar, but allow unrolling to reduce assignments (default).
+.IP vector
+Optimize stencils by inserting vector temporaries.
+.RE
+.TP
+.B \-U\fIname\fP
+Preprocessor flag, passed directly to \fBcpp\fP.
+.TP
+.B \-v
+Print out compiler phases as they execute.
+.TP
+.B \-verbose
+Print out verbose error and warning messages.
+.TP
+.B \-V
+Print out version information and quit.
+
+.SH EXAMPLES
+.TP
+zc my_program.z
+Compiles \fImy_program.z\fP and returns a binary
+called \fImy_program\fP.
+.TP
+zc -o a.out my_program.z
+Compiles \fImy_program.z\fP and returns a binary called \fIa.out\fP.
+.TP
+zc my_math.c my_program.z
+Compiles \fImy_program.z\fP and \fImy_math.c\fP and returns a binary
+called \fImy_program\fP.
+.TP
+zc my_program.z -lmine
+Compiles \fImy_program.z\fP, links with with \fIlibmine.a\fP  and
+returns a binary called \fImy_program\fP.
+
+.SH ERRORS
+The error and warning messages produced by \fBzc\fP are intended to be
+self-explanatory.  Contact \fBzpl-info@cs.washington.edu\fP if
+clarification is required.  If an internal error occurs, please
+contact \fBzpl-bugs@cs.washington.edu\fP.
+
+.SH BUGS
+Please mail any bugs (e.g., internal errors) to
+\fBzpl-bugs@cs.washington.edu\fP.  Include a description of the bug,
+full text of the ZPL program the produces the bug, the version of the
+compiler that you are using (from \fBzc -V\fP) and any compiler output
+(e.g., internal error number).
+
+.SH ENVIRONMENT VARIABLES
+.TP
+.B ZPLHOME
+Path to the ZPL installation (required), e.g., \fB/usr/local/zpl\fP.
+.TP
+.B ZPLCOMMLAYER
+Communication API used (required), e.g., \fBseq\fP, \fBshmem\fP, \fBmpi-mpich\fP.
+.TP
+.B ZPLTARGET
+Target architecture/OS (required), e.g. \fBalpha-osf\fP, \fBt3e\fP.
+.TP
+.B ZPLSOURCE
+Source architecture, if different from \fBZPLTARGET\fP.
+
+.SH FILES
+.TP
+.B \fIfile\fP.z
+input file
+.TP
+.B $ZPLHOME/bin/$ZPLTARGET/zc0
+ZPL source compiler
+.TP
+.B /tmp/zc-*
+compiler temporary directories and files
+
+.SH "RELATED INFORMATION"
+.TP
+Lawrence Snyder, \fIA ZPL Programmer's Guide\fP
+.TP
+Calvin Lin, \fIZPL Language Reference Manual\fP
+.TP
+For more information on ZPL, please visit the ZPL web page:
+.IP
+.B http://www.cs.washington.edu/research/zpl/
+
+.SH AUTHORS
+The ZPL compiler team at the University of Washington:
+.IP
+ zpl-info@cs.washington.edu

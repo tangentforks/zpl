@@ -1,0 +1,27 @@
+Guide to the codegen files:
+
+Agen.c:     ACCESS macro generation
+Bgen.c:     Bumper generation
+Cgen.c:     Codegen (bulk of user code)
+Dgen.c:     Declaration generation
+Dgenhelp.c: A companion to Dgen.c for use with parallel arrays
+Fgen.c:     Flood generation
+IOgen.c:    I/O generation
+Igen.c:     Indexi generation
+Irongen.c:  Ironman generation (@ communication)
+MPIgen.c:   MPI generation (instead of Ironman); probably out-of-date
+Mgen.c:     MLOOP generation
+PVMgen.c:   PVM generation (instead of Ironman); probably out-of-date
+Pgen.c:     Permutation generation (scatters/gathers/remaps)
+Privgen.c:  Privitization generation for global variables
+Profgen.c:  Profiling generation (probably out-of-date)
+Redgen.c:   Reduction generation
+Repgen.c:   Replacement generation (for use with MLOOP replacements)
+SRgen.c:    Scan/Reduction generation (code common to both Scans and Reductions)
+Scangen.c:  Scan generation
+Spsgen.c:   Sparse generation (region walkers; sparse arrays; sparse MLOOPs)
+Stackgen.c: Stack for Region/Mask scopes generation
+WRgen.c:    Wrap/Reflect generation
+Wgen.c:     Walker generation
+beautify.c: Indents generated C code
+cmplx_ens.c: replaces complex array expressions with a fake ensemble wrapper

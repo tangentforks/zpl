@@ -1,0 +1,16 @@
+#
+# etc/mpi-lam/Macros - mpi Makefile macros
+#
+
+CC=${CC:-hcc}
+CCVER=${CCVER:-"hcc -V"}
+
+START_CC=${START_CC:-cc}
+START_CCVER=${START_CCVER:-"cc -V"}
+START_LINK=${START_LINK:-$START_CC}
+
+. $ZPLHOME/etc/Macros
+
+MD_LIBS="$MD_LIBS -lmpi"
+
+FILE3=yes

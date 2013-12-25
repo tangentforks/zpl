@@ -1,0 +1,7 @@
+ NAS Parallel Benchmarks 2.4 (ZPL version) - MG Benchmark
+ Size:       32 x 32 x 32
+ Iterations: 4
+
+VERIFICATION SUCCESSFUL 
+L2 Norm is   5.307705578161e-05
+Verification = SUCCESSFUL

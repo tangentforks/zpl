@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. $ZPLHOME/etc/pvm/Macros
+
+
+CCVER="echo version number unknown -- check IRIX version"
+
+CFLAGS="$CFLAGS -64"
+START_CFLAGS="$START_CFLAGS -64"
+LFLAGS="$LFLAGS -64"
+START_LFLAGS="$START_LFLAGS -64"

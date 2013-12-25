@@ -1,0 +1,12 @@
+#
+# etc/seq/x86-linux/Macros - seq x86-linux Makefile macros
+#
+
+CC=${CC:-gcc}
+CCVER=${CCVER-"gcc --version"}
+EXE_SUFFIX=${EXE_SUFFIX:-".exe"}
+
+MAKEDEPEND_PRE=${MAKEDEPEND_PRE:-"gcc -M"}
+MAKEDEPEND_POST=${MAKEDEPEND_POST:-"> Makefile.depend"}
+
+. "$ZPLHOME/etc/seq/Macros"

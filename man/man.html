@@ -1,0 +1,277 @@
+<!--#set var="doctitle" value="man zc"-->
+<!--#set var="title" value=" "-->
+<!--#set var="usesidebar" value="true"-->
+<!--#include virtual="/research/projects/orca3/zpl/www/include/stdheader.html"-->
+<p>zc (1)<p>
+<p>NAME
+</p><p><dl><dl><dt>
+<b>zc, rzc</b>
+- The ZPL compiler.
+</dt></dl></dl></p>
+<p>SYNOPSIS
+</p><p><dl><dl><dt>
+
+<p><em>zc | rzc</em> [-cpp] [-d <em>directory</em>] [-D<em>name</em>] [-D<em>name</em>=<em>def</em>]
+<br>
+<dd>    [-fusion[<em>n</em>]] [-h] [-I<em>directory</em>] [-l<em>lib</em>]
+    [-L<em>directory</em>] [-noaccessopt] [-nobuild]
+    [-nocommopt] [-noconstopt] [-nocontract]
+    [-nostrength] [-o <em>output</em>] [-O[<em>n</em>]] [-savec]
+    [-safe] [-Uname] [-v] [-verbose] [-V]
+    [<em>C files</em>] [<em>object files</em>] <em>ZPL file</em>
+</dd></dt><dt>
+</dt></dl></dl></p>
+<p>DESCRIPTION
+</p><p><dl><dl><dt>
+<b>zc</b> is the compiler for the ZPL data parallel array language
+(<b>rzc</b> is the remote version of the compiler).  <b>zc</b> requires
+a single ZPL source file as an argument.
+</dt></dl></dl></p>
+<p>FLAGS
+</p><p><dl><dl><dt>
+
+<p><b>-cpp</b>
+<br>
+<dd>Use <b>cpp</b> to preprocess the input ZPL file.  <b>cpp</b> does not
+run by default.
+</dd></dt><dt>
+
+<p><b>-d <em>directory</em></b>
+<br>
+<dd>Specify the directory in which to place the generated C code.  Use
+this in conjunction with <b>-savec</b> to save the generated ANSI C
+code.
+</dd></dt><dt>
+
+<p><b>-D<em>name</em></b>
+<br>
+<dd></dd></dt><dt>
+
+<p><b>-D<em>name</em>=<em>def</em></b>
+<br>
+<dd>Preprocessor flag, passed directly to <b>cpp</b>.
+</dd></dt><dt>
+
+<p><b>-fusion[<em>n</em>]</b>
+<br>
+<dd>Enable array loop fusion.  When no value is specified for <em>n</em>, the
+compiler performs full fusion (<b>-fusion3</b>).
+</dd></dt><dt>
+<br>0<br>
+<dd>No array loop fusion.
+</dd></dt><dt>
+<br>1<br>
+<dd>Enable fusion for compiler temporaries.
+</dd></dt><dt>
+<br>2<br>
+<dd>Enable fusion for compiler temporaries and contraction.
+</dd></dt><dt>
+<br>3<br>
+<dd>Enable fusion for compiler temporaries, contraction and locality
+(default).
+</dd></dt><dt>
+
+<p><b>-h</b>
+<br>
+<dd>Display usage information.
+</dd></dt><dt>
+
+<p><b>-I<em>directory</em></b>
+<br>
+<dd>Add <em>directory</em> to the search path for <b>#include</b> files.  This
+directory is added to the search path for any invocation of <b>cpp</b>,
+including while building the final binary.
+</dd></dt><dt>
+
+<p><b>-l<em>lib</em></b>
+<br>
+<dd>Use <em>lib</em> during object code linking for final binary.
+</dd></dt><dt>
+
+<p><b>-L<em>directory</em></b>
+<br>
+<dd>Add <em>directory</em> to the search path for link time libraries while
+building the final binary.
+</dd></dt><dt>
+
+<p><b>-noaccessopt</b>
+<br>
+<dd>Disable efficient array access.  The default is on.
+</dd></dt><dt>
+
+<p><b>-nobuild</b>
+<br>
+<dd>Do not build the final binary.  <b>-nobuild</b> implies <b>-savec</b>
+and <b>-d</b>.
+</dd></dt><dt>
+
+<p><b>-nocommopt</b>
+<br>
+<dd>Disable communication optimizations.  The default is on.
+</dd></dt><dt>
+
+<p><b>-noconstopt</b>
+<br>
+<dd>Disable evaluation of constant initializers.  The default is on.
+</dd></dt><dt>
+
+<p><b>-nocontract</b>
+<br>
+<dd>Disable array contraction.  The default is on.
+</dd></dt><dt>
+
+<p><b>-nostrength</b>
+<br>
+<dd>Disable strength reduction optimizations.  The default is on.
+</dd></dt><dt>
+
+<p><b>-o <em>output</em></b>
+<br>
+<dd>Name the final binary <em>output</em>.  If this flag is not used, the
+name of the binary is that of the basename of the original input file.
+</dd></dt><dt>
+
+<p><b>-O[<em>n</em>]</b>
+<br>
+<dd>Set the optimization level.  When no value is specified for <em>n</em>,
+the compiler performs full optimizations (<b>-O1</b>).
+</dd></dt><dt>
+<br>0<br>
+<dd>Disable all optimizations.  Same as <b>-fusion0</b>,
+<b>-noaccessopt</b>, <b>-nocommopt</b>, <b>-noconstopt</b>,
+<b>-nocontract</b>, and <b>-nostrength</b>.
+</dd></dt><dt>
+<br>1<br>
+<dd>Enable all optimizations (default).
+</dd></dt><dt>
+
+<p><b>-savec</b>
+<br>
+<dd>Save the generation C code.  When using <b>-savec</b>, an output
+directory must be specified with the <b>-d</b> flag.
+</dd></dt><dt>
+
+<p><b>-U<em>name</em></b>
+<br>
+<dd>Preprocessor flag, passed directly to <b>cpp</b>.
+</dd></dt><dt>
+
+<p><b>-v</b>
+<br>
+<dd>Print out compiler phases as they execute.
+</dd></dt><dt>
+
+<p><b>-verbose</b>
+<br>
+<dd>Print out verbose error and warning messages.
+</dd></dt><dt>
+
+<p><b>-V</b>
+<br>
+<dd>Print out version information and quit.
+</dd></dt><dt>
+</dt></dl></dl></p>
+<p>EXAMPLES
+</p><p><dl><dl><dt>
+
+<p>zc my_program.z
+<br>
+<dd>Compiles <em>my_program.z</em> and returns a binary
+called <em>my_program</em>.
+</dd></dt><dt>
+
+<p>zc -o a.out my_program.z
+<br>
+<dd>Compiles <em>my_program.z</em> and returns a binary called <em>a.out</em>.
+</dd></dt><dt>
+
+<p>zc my_math.c my_program.z
+<br>
+<dd>Compiles <em>my_program.z</em> and <em>my_math.c</em> and returns a binary
+called <em>my_program</em>.
+</dd></dt><dt>
+
+<p>zc my_program.z my_lib.a
+<br>
+<dd>Compiles <em>my_program.z</em>, links with with <em>my_lib.a</em>  and
+returns a binary called <em>my_program</em>.
+</dd></dt><dt>
+</dt></dl></dl></p>
+<p>ERRORS
+</p><p><dl><dl><dt>
+The error and warning messages produced by <b>zc</b> are intended to be
+self-explanatory.  If an build or internal error occurs, please
+contact <b>zpl-bugs@cs.washington.edu</b>.
+</dt></dl></dl></p>
+<p>BUGS
+</p><p><dl><dl><dt>
+Please mail any bugs (e.g., internal errors) to
+<b>zpl-bugs@cs.washington.edu</b>.  Include a description of the bug,
+ll text of the ZPL program the produces the bug, the version of the
+compiler that you are using (from <b>zc -V</b>) and any compiler output
+(e.g., internal error number).
+</dt></dl></dl></p>
+<p>ENVIRONMENT
+</p><p><dl><dl><dt>
+
+<p><b>ZPLHOME</b>
+<br>
+<dd>Path to the ZPL installation (required), e.g., <b>/usr/local/zpl</b>.
+</dd></dt><dt>
+
+<p><b>ZPLCOMMLAYER</b>
+<br>
+<dd>Communication API used (required), e.g., <b>seq</b>, <b>shmem</b>, <b>mpi</b>.
+</dd></dt><dt>
+
+<p><b>ZPLTARGET</b>
+<br>
+<dd>Target architecture (required), e.g. <b>alpha</b>, <b>t3e</b>.
+</dd></dt><dt>
+
+<p><b>ZPLSOURCE</b>
+<br>
+<dd>Source architecture, if different from <b>ZPLTARGET</b>.
+</dd></dt><dt>
+</dt></dl></dl></p>
+<p>FILES
+</p><p><dl><dl><dt>
+
+<p><b><em>file</em>.z</b>
+<br>
+<dd>input file
+</dd></dt><dt>
+
+<p><b>$ZPLHOME/bin/zc0</b>
+<br>
+<dd>ZPL source compiler
+</dd></dt><dt>
+
+<p><b>/tmp/zc-*</b>
+<br>
+<dd>compiler temporary directories and files
+</dd></dt><dt>
+</dt></dl></dl></p>
+<p>RELATED INFORMATION</p><p><dl><dl><dt>
+
+<p>Lawrence Snyder, <em>A ZPL Programmer's Guide</em>
+<br>
+<dd></dd></dt><dt>
+
+<p>Calvin Lin, <em>ZPL Language Reference Manual</em>
+<br>
+<dd></dd></dt><dt>
+
+<p>For more information on ZPL, please visit the ZPL web page:
+<br>
+<dd></dd></dt><dt>
+<br><dd><b>http://www.cs.washington.edu/research/zpl/</b>
+</dd></dt><dt>
+</dt></dl></dl></p>
+<p>AUTHORS
+</p><p><dl><dl><dt>
+The ZPL compiler team at the University of Washington:
+<br><dd> zpl-info@cs.washington.edu
+</dd></dt><dt>
+</dt></dl></dl></p>
+<!--#include virtual="/research/projects/orca3/zpl/www/include/footer.html"-->

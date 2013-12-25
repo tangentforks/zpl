@@ -1,0 +1,7 @@
+#
+# etc/pvm/x86-linux/Macros - pvm x86-linux Makefile macros
+#
+
+CCVER="cc -v"
+
+. $ZPLHOME/etc/pvm/Macros

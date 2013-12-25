@@ -1,0 +1,14 @@
+#
+# etc/mpi-mpich/Macros - mpi Makefile macros
+#
+
+CC=${CC:-mpicc}
+CC_VER=${CC_VER:-"echo version number unknown"}
+
+START_CC=${START_CC:-cc}
+START_CCVER=${START_CCVER:-"cc -V"}
+START_LINK=${START_LINK:-$START_CC}
+
+. $ZPLHOME/etc/Macros
+
+FILE3=yes

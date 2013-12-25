@@ -1,0 +1,11 @@
+#
+# etc/pvm/sparc-solaris/Macros - pvm sparc-solaris Makefile macros
+#
+
+CC=${CC:-gcc}
+CCVER=${CCVER:-"gcc -v"}
+
+. $ZPLHOME/etc/pvm/Macros
+
+MD_LIBS="$MD_LIBS -lnsl -lsocket"
+START_MD_LIBS="$START_MD_LIBS -lnsl -lsocket"

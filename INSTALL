@@ -1,0 +1,149 @@
+
+INSTALLING ZPL
+==============
+
+1) There are three components to building a working ZPL compiler:
+
+	a) the compiler
+	b) the machine-dependent runtime libraries
+	c) the machine-independent runtime libraries
+
+   This file attempts to walk you through the process of building
+   these three components.
+
+
+2) Your first step should be to set the following environment variables:
+
+  ZPLHOME      : the absolute path of the directory containing this file
+
+  ZPLTARGET    : the platform that you're compiling for
+
+                    well-exercised platforms (ones we use regularly)
+                    ------------------------------------------------
+                    mips-irix      -- MIPS running irix
+                    sparc-solaris  -- Sparc running solaris
+	            t3e            -- Cray T3E
+                    x86-cygwin     -- Intel CPU running cygwin over windows
+                    x86-linux      -- Intel CPU running linux
+                    x1             -- Cray X1
+
+                    stale platforms (ones we've used in the past, but
+                    haven't tried recently)
+                    -------------------------------------------------
+                    alpha-osf      -- DEC Alpha running OSF
+                    enterprise     -- Sun Enterprise
+                    hppa-hpux      -- Hewlitt-Packard workstation
+                    origin         -- SGI Origin
+                    pchallenge     -- SGI Power Challenge
+                    powerpc-aix    -- PowerPC running AIX
+                    powerpc-macosx -- PowerPC running Mac OS X
+                    sp2            -- IBM SP-2
+                    sparc-sunos    -- Sparc running sunOS
+                    x86-freebsd    -- Intel CPU running FreeBSD
+                    
+
+  ZPLSOURCE    : the platform you're compiling from.  DON'T set this
+                 unless it differs from ZPLTARGET.  This typically
+                 only occurs when you're in a cross-compiling 
+                 environment.  It can be set to any of the same values
+                 as ZPLTARGET.
+
+  ZPLCOMMLAYER : the communication layer used between sibling ZPL
+                 processes.  This should be one of the following:
+
+                    seq -- sequential runs only
+                    mpi -- MPI (Message Passing Interface)
+                    pvm -- PVM (Parallel Virtual Machine)
+                    shmem -- SHMEM (SHMEM)
+
+                 Note that for all communication layers other than seq,
+                 you are responsible for installing your communication
+                 layer separately and testing it to ensure that it works
+                 independently of ZPL.  Your environment should also be
+                 set up to use the communication layer (e.g., PVM_ROOT
+                 should be set if you're using PVM; mpicc or hcc should
+                 be in your path for the MPICH and LAM versions of MPI,
+                 etc.)
+                 
+  ZPLMPITYPE   : the flavor of MPI you're using (no need to set this
+                 unless ZPLCOMMLAYER is mpi).  Acceptable values are:
+
+                    lam   -- the LAM implementation of MPI
+                    mpich -- the MPICH implementation of MPI
+
+                 If you are using a vendor-supplied implementation of
+                 MPI, this variable should typically be left unset.
+
+
+  All of these environment variables are used to determine the tool
+  sets, options, source & header files, and destination locations for
+  your ZPL installation.  If you find that you're using a platform
+  that is not covered by the above options you can (1) use something
+  that seems close and hope it works, (2) dig around in the build
+  system (see the DIRS file in this directory) and specify the
+  parameters for your platform, or (3) contact us at
+  zpl-info@cs.washington.edu for more help and information.
+
+
+3) Type "make" or "make all" in this directory (or gmake if your
+   system supports it but not make).
+
+
+4) With any luck, when the Makefile is finished, you will end up with
+   the compiler binaries (zc and zc0) in the bin/ directory, and a
+   number of .a's and/or .o's in the lib/$ZPLCOMMLAYER/$ZPLTARGET
+   directory.
+
+
+5) Supporting multiple installations: The ZPL compiler itself is
+   machine- and ZPLCOMMLAYER-independent, so you only need to build a
+   single copy of it per architecture that you'll be using it on (and
+   you may wish to copy the binaries to an appropriate subdirectory).
+   You'll need to create a new copy of the libraries for each 
+   ZPLCOMMLAYER/ZPLTARGET pair, however.  These can coexist peacefully
+   due to the structure of the lib/ directory.  To make a second set
+   of libraries, simply reset your ZPLCOMMLAYER/ZPLTARGET variables,
+   and type "make cleanlibs" then "make libs" to clean out the .o
+   files left from the previous build and then make a new set of
+   libraries, respectively.
+
+
+6) Using an installation: To use an installation, users will need to
+   set the same environment variables as above (presumably to the
+   same values you set them to when creating the installation).  They
+   will also likely want to ensure that the zc and zc0 binaries are
+   in their path.  A sample ZPL compilation line will look something
+   like:
+
+      zc -o foo foo.z
+
+   Some other useful options are:
+
+      -h       -- lists other available options
+      -verbose -- yields more verbose error messages
+      -v       -- prints out commands executed by the compiler
+      -V       -- prints compiler version number
+      -d       -- specifies a directory for the generated C code
+      -savec   -- saves the generated C code (must also use -d)
+
+   If you're using the -v option, setting the environment variable
+   ZMAKEVERBOSE to "yes" will provide additional information about
+   the commands being executed.
+
+
+7) Once your compile has completed successfully, you can run your
+   ZPL program using:
+
+      foo -p1
+
+   which specifies to run program foo using 1 processor.  Other
+   useful command-line flags for your ZPL program can be obtained
+   using the -h flag:
+
+      foo -h
+
+
+8) Thanks for your interest in ZPL.  Please direct any questions about
+   any of this to:
+
+      zpl-info@cs.washington.edu

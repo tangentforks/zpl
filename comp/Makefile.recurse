@@ -1,0 +1,26 @@
+include $(ZCMACROS)
+
+default: all
+
+all: $(OBJ)
+
+clean:
+	rm -f *.o parser.c y.tab.h y.tab.c y.output *.rtl
+
+clobber: clean
+	rm -f core *~ Makefile.depend *.bak
+
+depend:	$(SRC)
+	$(MAKEDEPEND_PRE) $(SRC) $(MAKEDEPEND_POST)
+
+include Makefile.depend
+
+parser.c: zpl.y
+	yacc $(YFLAGS) zpl.y
+	-(cmp -s y.tab.h ../include/parser.h || mv y.tab.h ../include/parser.h)
+	-/bin/rm -f parser.c
+	cp y.tab.c parser.c
+	chmod g+w y.tab.c
+
+parser.o: parser.c
+	$(CC) $(NOWARNFLAGS) -c -o parser.o parser.c

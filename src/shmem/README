@@ -1,0 +1,59 @@
+
+Original Structure:
+
+Input: maxcomms: max number of comms outstanding at a single time
+       maxblocks: max number of memblocks per comm
+
+Local allocation:
+
+	commbank : maxcomms of IM_Info -- use these to store info
+	           about comms
+
+	freelist : maxcomms of IM_Info pointers -- use these to store
+		which of the above are available for use
+
+Symmetric allocation:
+	remmem : procs*maxcomms*maxblocks of IM_memblocks -- a place for
+		receivers to put their requests of where the memory
+		should go.
+
+	remmemready : procs*maxcomms integers -- a boolean for whether
+		or not the corresponding remmem blocks are ready to go
+
+	remmemwritable : procs*maxcomms integers -- it's OK for the
+		receiver to overwrite the remmem
+
+	dstready : procs*maxcomms integers -- _DR has been called, so
+		_SR can send
+
+	putdone : procs*maxcomms integers -- _SR has put all the data
+		over
+
+IM_New:
+	* get free IM_Info from freelist
+	* if we receive, wait for remmemwritable to be true
+	* once it is, reset it to 0
+	* put our memblock vector into remmem on sending proc
+	* fence
+	* set remmemready flag
+	* copy sendinfo
+
+IM_Old:
+	* set remmemwritable flag on processor with which we were
+	  communicating
+
+IM_DR:
+	* set dstready flag
+
+IM_SR:
+	* wait for remmemready to be true
+	* once it is, reset it to 0
+	* make send and recv meminfo as packed as possible
+	* wait for dstready to be true
+	* once it is, reset it to 0
+	* put each memblock
+	* fence
+	* set putdone to 1
+
+IM_DN:
+	* wait for putdone to be true

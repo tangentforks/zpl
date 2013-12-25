@@ -1,0 +1,32 @@
+#!/bin/sh
+
+target=""
+
+if [ $# -eq 1 ]; then
+target=$1
+else
+echo "$0 must be invoked with a specific target"
+exit 1
+fi
+
+ZCDIRS="adt ccodegen checkpoint comm debug graph interproc iregion main opt parse runtime statement symbol temps transform traverse type util"
+#ZCDIRS="ccodegen"
+
+echo "*** Making $target in source directories..."
+for dir in $ZCDIRS; do
+echo "*** $dir ***"
+
+# run the command in each directory
+cd $dir && make $target
+if [ "$?" -ne "0" ]; then
+  echo "Error compiling in directory $dir"
+  exit 1
+fi
+cd ..
+done
+
+echo "*** (comp) ***"
+ZCMACROS=`./PickMacros $target .`
+make -f Makefile.zc "ZCMACROS=$ZCMACROS" $target
+
+exit 0

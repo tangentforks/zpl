@@ -1,0 +1,13 @@
+#
+# etc/mpi/t3d/Macros - t3d mpi Makefile macros
+#
+
+. $ZPLHOME/etc/mpi/Macros
+
+CFLAGS="$CFLAGS -Tcray-t3d"
+LFLAGS="$LFLAGS -Tcray-t3d"
+
+MD_LIBPATHS=-L/mpp/lib
+MD_LIBS="-lsma -lmpi"
+
+FILE3=no

@@ -1,0 +1,17 @@
+#!/bin/csh -f
+#
+# make shmem up to date
+#
+
+# setenv XXX_OLD_ZPLCOMMLAYER \$ZPLCOMMLAYER
+
+setenv ZPLCOMMLAYER shmem
+./zmake clean
+cd shmem
+./zmake clean
+./zmake "CFLAGS=-g"
+cd ..
+./zmake "CFLAGS=-g"
+
+# setenv ZPLCOMMLAYER \$XXX_OLD_ZPLCOMMLAYER
+# unsetenv XXX_OLD_ZPLCOMMLAYER

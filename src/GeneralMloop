@@ -1,0 +1,70 @@
+  int i;
+  int j[_MAXRANK];
+  int numdims;
+
+  numdims=_NUMDIMS(reg);
+  for (i=0;i<numdims;i++) {
+    j[i]=_REG_MYLO(reg,i);
+  }
+
+/* i0 as inner loop */
+
+  while (1) {
+    j[0]++;
+    for (i=0;i<numdims-1;i++) {
+      if (j[i]>_REG_MYHI(reg,i)) {
+        j[i]=_REG_MYLO(reg,i);
+        j[i+1]++;
+      } else {
+        break;
+      }
+    }
+    if (j[numdims-1]>_REG_MYHI(reg,i)) {
+      break;
+    }
+    
+    /* at this point, enter any statements that should be in the MLOOP */
+    /* using i[0], i[1], etc. as we used i0, i1, etc. before... */
+    
+  }
+
+/* i0 as outer loop */
+
+  while (1) {
+    j[numdims-1]++;
+    for (i=numdims-1;i>0;i--) {
+      if (j[i]>_REG_MYHI(reg,i)) {
+        j[i]=_REG_MYLO(reg,i);
+        j[i-1]++;
+      } else {
+        break;
+      }
+    }
+    if (j[0]>_REG_MYHI(reg,i)) {
+      break;
+    }
+    
+    /* at this point, enter any statements that should be in the MLOOP */
+    /* using i[0], i[1], etc. as we used i0, i1, etc. before... */
+    
+  }
+
+
+  while (1) {
+
+    
+
+    i[numdims-1] += _REG_STRIDE(reg,numdims-1);
+
+    for (j=numdims-1;j>0;j--) {
+      if (i[j] > _REG_MYHI(reg,j)) {
+        i[j-1] += _REG_STRIDE(reg,j-1);
+        i[j]=_REG_MYLO(reg,j);
+      } else {
+	break;
+      }
+    }
+    if (i[0] > _REG_MYHI(reg,0)) {
+      break;
+    }
+  }

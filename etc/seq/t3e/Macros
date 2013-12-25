@@ -1,0 +1,9 @@
+#
+# etc/seq/t3e/Macros - seq t3e Makefile Macros
+#
+
+MAKEDEPEND_PRE="cc -M"
+MAKEDEPEND_POST="> Makefile.depend"
+
+. $ZPLHOME/etc/seq/Macros
+

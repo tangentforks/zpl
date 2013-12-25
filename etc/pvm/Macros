@@ -1,0 +1,12 @@
+#
+# etc/pvm/Macros - pvm Makefile macros
+#
+
+MD_LIB_INCLS="-I$PVM_ROOT/include -I$PVM_ROOT/pvmgs"
+
+MD_LIBPATHS="-L$PVM_ROOT/lib/$PVM_ARCH"
+MD_LIBS=${MD_LIBS:-"-lgpvm3 -lpvm3"}
+
+. $ZPLHOME/etc/Macros
+
+FILE3=yes

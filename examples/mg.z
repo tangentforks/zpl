@@ -1,0 +1,631 @@
+--  This is an implementation of the NAS Parallel Benchmark MG
+--  (version 2.4) in ZPL.
+
+--  It uses indexed arrays of parallel arrays to express the
+--  hierarchical structure used in the computation and the wrap-@
+--  operator (@^) to handle the toroidal boundary conditions.  It uses
+--  a user-defined reduction to determine the locations of the initial
+--  charges, or those charges may be read from an input file specified
+--  in the configuration variables.
+
+--  Performance for this implementation may be lacking due to recent
+--  changes to the ZPL compiler which disabled the stencil
+--  optimization for this code.  If this causes problems for you, let
+--  us know at zpl-info@cs.washington.edu and we will prioritize the
+--  fix accordingly.
+
+--  This implementation was written by Brad Chamberlain in May 2004
+--  and has evolved from an early implementation by Ton Ngo.
+
+
+program MG;
+
+type classes = (S, W, A, B, C, D, O);
+
+const
+  probSize: array [S..O] of integer = {32, 64, 256, 256, 512, 1024, 256};
+  numIters: array [S..O] of integer = {4, 40, 4, 20, 20, 50, 4};
+  checksums: array [S..O] of double = {0.0000530770700573,
+                                       0.00000000000000000250391406439,
+                                       0.000002433365309,
+                                       0.00000180056440132,
+                                       0.000000570674826298,
+                                       0.000000000158327506043,
+                                       0.0};
+
+
+-- helper function for config consts/vars:
+
+procedure lg2(in x: integer): integer;
+var lg: integer = -1;
+begin
+  while (x) do
+    x := bsr(x, 1);
+    lg += 1;
+  end;
+
+  return lg;
+end;
+
+
+config const
+  Class: classes = S;
+
+
+-- problem size parameters
+
+  n: integer = probSize[Class];
+  nx: integer = n;
+  ny: integer = n;
+  nz: integer = n;
+
+  numLevels: integer = lg2(n);
+
+  nit: integer = numIters[Class];
+
+  verifyValue: float = checksums[Class];
+
+
+-- control variables:
+
+  printCharges: boolean = false;
+  warmup: boolean = true;
+  verbose: boolean = false;
+  printError: boolean = false;
+  printTiming: boolean = false;
+
+
+const
+  numDims: integer = 3;
+  numCharges: integer = 10;
+
+
+-- coefficients for stencils
+type coeff = array [0..numDims] of float;
+const a: coeff = {-8.0/3.0, 0.0, 1.0/6.0, 1.0/12.0};
+var   c: coeff;
+
+
+-- directions:
+
+const
+  dir100: array [0..numLevels] of direction<+,0,0> 
+        = [ 2^index1, 0        , 0        ];
+  dirN00: array [0..numLevels] of direction<-,0,0>
+        = [-2^index1, 0        , 0        ];
+  dir010: array [0..numLevels] of direction<0,+,0>
+        = [ 0       ,  2^index1, 0        ];
+  dir0N0: array [0..numLevels] of direction<0,-,0>
+        = [ 0       , -2^index1, 0        ];
+  dir001: array [0..numLevels] of direction<0,0,+>
+        = [ 0       , 0        ,  2^index1];
+  dir00N: array [0..numLevels] of direction<0,0,->
+        = [ 0       , 0        , -2^index1];
+
+  dir110: array [0..numLevels] of direction<+,+,0>
+        = [ 2^index1,  2^index1, 0        ];
+  dir1N0: array [0..numLevels] of direction<+,-,0>
+        = [ 2^index1, -2^index1, 0        ];
+  dirN10: array [0..numLevels] of direction<-,+,0>
+        = [-2^index1,  2^index1, 0        ];
+  dirNN0: array [0..numLevels] of direction<-,-,0>
+        = [-2^index1, -2^index1, 0        ];
+  dir101: array [0..numLevels] of direction<+,0,+>
+        = [ 2^index1,  0       ,  2^index1];
+  dir10N: array [0..numLevels] of direction<+,0,->
+        = [ 2^index1,  0       , -2^index1];
+  dirN01: array [0..numLevels] of direction<-,0,+>
+        = [-2^index1,  0       ,  2^index1];
+  dirN0N: array [0..numLevels] of direction<-,0,->
+        = [-2^index1,  0       , -2^index1];
+  dir011: array [0..numLevels] of direction<0,+,+>
+        = [ 0       ,  2^index1,  2^index1];
+  dir01N: array [0..numLevels] of direction<0,+,->
+        = [ 0       ,  2^index1, -2^index1];
+  dir0N1: array [0..numLevels] of direction<0,-,+>
+        = [ 0       , -2^index1,  2^index1];
+  dir0NN: array [0..numLevels] of direction<0,-,->
+        = [ 0       , -2^index1, -2^index1];
+
+  dir111: array [0..numLevels] of direction<+,+,+>
+        = [ 2^index1,  2^index1,  2^index1];
+  dir11N: array [0..numLevels] of direction<+,+,->
+        = [ 2^index1,  2^index1, -2^index1];
+  dir1N1: array [0..numLevels] of direction<+,-,+>
+        = [ 2^index1, -2^index1,  2^index1];
+  dir1NN: array [0..numLevels] of direction<+,-,->
+        = [ 2^index1, -2^index1, -2^index1];
+  dirN11: array [0..numLevels] of direction<-,+,+>
+        = [-2^index1,  2^index1,  2^index1];
+  dirN1N: array [0..numLevels] of direction<-,+,->
+        = [-2^index1,  2^index1, -2^index1];
+  dirNN1: array [0..numLevels] of direction<-,-,+>
+        = [-2^index1, -2^index1,  2^index1];
+  dirNNN: array [0..numLevels] of direction<-,-,-> 
+        = [-2^index1, -2^index1, -2^index1];
+
+  step: array [0..numLevels] of direction<-,-,-> = dirNNN[index1];
+
+
+-- regions:
+
+const
+  Base: region<.., .., ..> = [1..nx, 1..ny, 1..nz];
+  Level: array [0..numLevels] of region<.., .., ..> = Base by step[index1];
+
+
+-- arrays:
+
+var
+  V: [Base] double;
+  U: array [0..numLevels] of [Level[index1]] double;
+  R: array [0..numLevels] of [Level[index1]] double;
+
+
+procedure norm2u3(inout R: [,,] double; inout rnm2, rnmu: double);
+var
+  s: double;
+  n: integer;
+begin
+  n := nx * ny * nz;
+
+  s := +<< R^2;
+
+  rnm2 := sqrt(s/n);
+
+  rnmu := max<< abs(R);
+end;
+
+
+procedure resid(inout R, V, U: [,,] double; lvl:integer);
+begin
+  R := V - a[0] *  U 
+/*       - a[1] * (U@^dir100[lvl] + U@^dir010[lvl] + U@^dir001[lvl] +
+                   U@^dirN00[lvl] + U@^dir0N0[lvl] + U@^dir00N[lvl]) */
+         - a[2] * (U@^dir110[lvl] + U@^dir101[lvl] + U@^dir011[lvl] + 
+                   U@^dir1N0[lvl] + U@^dir10N[lvl] + U@^dir01N[lvl] + 
+                   U@^dirN10[lvl] + U@^dirN01[lvl] + U@^dir0N1[lvl] + 
+                   U@^dirNN0[lvl] + U@^dirN0N[lvl] + U@^dir0NN[lvl])
+         - a[3] * (U@^dir111[lvl] + U@^dir11N[lvl] + U@^dir1N1[lvl] + 
+                   U@^dir1NN[lvl] + U@^dirN11[lvl] + U@^dirN1N[lvl] + 
+                   U@^dirNN1[lvl] + U@^dirNNN[lvl]);
+end;
+
+
+procedure rprj3(inout S, R: [,,] double; lvl:integer);
+begin
+  S := 0.5000 * R +
+     + 0.2500 * (R@^dir100[lvl] + R@^dir010[lvl] + R@^dir001[lvl] + 
+                 R@^dirN00[lvl] + R@^dir0N0[lvl] + R@^dir00N[lvl])
+     + 0.1250 * (R@^dir110[lvl] + R@^dir101[lvl] + R@^dir011[lvl] + 
+                 R@^dir1N0[lvl] + R@^dir10N[lvl] + R@^dir01N[lvl] + 
+                 R@^dirN10[lvl] + R@^dirN01[lvl] + R@^dir0N1[lvl] + 
+                 R@^dirNN0[lvl] + R@^dirN0N[lvl] + R@^dir0NN[lvl])
+     + 0.0625 * (R@^dir111[lvl] + R@^dir11N[lvl] + R@^dir1N1[lvl] + 
+                 R@^dir1NN[lvl] + R@^dirN11[lvl] + R@^dirN1N[lvl] + 
+                 R@^dirNN1[lvl] + R@^dirNNN[lvl]);
+end;
+
+
+procedure psinv(inout U, R: [,,] double; lvl:integer);
+begin
+  U += c[0] *  R
+     + c[1] * (R@^dir100[lvl] + R@^dir010[lvl] + R@^dir001[lvl] + 
+               R@^dirN00[lvl] + R@^dir0N0[lvl] + R@^dir00N[lvl])
+     + c[2] * (R@^dir110[lvl] + R@^dir101[lvl] + R@^dir011[lvl] + 
+               R@^dir1N0[lvl] + R@^dir10N[lvl] + R@^dir01N[lvl] + 
+               R@^dirN10[lvl] + R@^dirN01[lvl] + R@^dir0N1[lvl] + 
+               R@^dirNN0[lvl] + R@^dirN0N[lvl] + R@^dir0NN[lvl])
+/*   + c[3] * (R@^dir111[lvl] + R@^dir11N[lvl] + R@^dir1N1[lvl] + 
+               R@^dir1NN[lvl] + R@^dirN11[lvl] + R@^dirN1N[lvl] + 
+               R@^dirNN1[lvl] + R@^dirNNN[lvl]) */
+     ;
+end;
+
+
+procedure interp(inout R, S: [,,] double; lvl: integer);
+begin
+  R += S;
+  [" at dirN00[lvl]] R += .500 * (S@^dir100[lvl] + S@^dirN00[lvl]);
+  [" at dir0N0[lvl]] R += .500 * (S@^dir010[lvl] + S@^dir0N0[lvl]);
+  [" at dir00N[lvl]] R += .500 * (S@^dir001[lvl] + S@^dir00N[lvl]);
+  [" at dirNN0[lvl]] R += .250 * (S@^dir110[lvl] + S@^dirN10[lvl] +
+                                  S@^dir1N0[lvl] + S@^dirNN0[lvl]);
+  [" at dirN0N[lvl]] R += .250 * (S@^dir101[lvl] + S@^dirN01[lvl] +
+                                  S@^dir10N[lvl] + S@^dirN0N[lvl]);
+  [" at dir0NN[lvl]] R += .250 * (S@^dir011[lvl] + S@^dir0N1[lvl] +
+                                  S@^dir01N[lvl] + S@^dir0NN[lvl]);
+  [" at dirNNN[lvl]] R += .125 * (S@^dir111[lvl] + S@^dirN11[lvl] +
+                                  S@^dir1N1[lvl] + S@^dir11N[lvl] +
+                                  S@^dirNN1[lvl] + S@^dir1NN[lvl] +
+                                  S@^dirN1N[lvl] + S@^dirNNN[lvl]);
+end;
+
+
+procedure mg3P();
+var lvl: integer;
+begin
+  -- project up the hierarchy
+  for lvl := 1 to numLevels do
+    [Level[lvl]] rprj3(R[lvl], R[lvl-1], lvl-1);
+  end;
+
+  -- compute at the top of the hierarchy
+  [Level[numLevels]] begin
+    U[numLevels] := 0.0;
+    psinv(U[numLevels], R[numLevels], numLevels);
+  end;
+
+  -- interpolate down the hierarchy
+  for lvl := numLevels-1 downto 1 do
+    [Level[lvl]] begin
+      U[lvl] := 0.0;
+      [Level[lvl+1]] interp(U[lvl], U[lvl+1], lvl);
+      resid(R[lvl], R[lvl], U[lvl], lvl);
+      psinv(U[lvl], R[lvl], lvl);
+    end;
+  end;
+
+  -- compute at the bottom of the hierarchy
+  [Level[1]] interp(U[0], U[1], 0);
+
+  resid(R[0], V, U[0], 0);
+  psinv(U[0], R[0], 0);
+end;
+
+
+procedure computeMG(): double;
+var
+  rnm2, rnmu: double;
+  it: integer;
+begin
+  resid(R[0], V, U[0], 0);
+  norm2u3(R[0], rnm2, rnmu);
+  for it := 1 to nit do
+    mg3P();
+    resid(R[0], V, U[0], 0);
+  end;
+  norm2u3(R[0], rnm2, rnmu);
+
+  return rnm2;
+end;
+
+
+prototype zran3(inout V:[,,] double);
+
+procedure initArrays();
+begin
+  zran3(V);
+  U[0] := 0.0;
+end;
+
+
+procedure initializeMG();
+begin
+  writeln(" NAS Parallel Benchmarks 2.4 (ZPL version) - MG Benchmark");
+  writeln(" Size:       %d":nx, " x %d": ny, " x %d": nz);
+  writeln(" Iterations: %d": nit);
+  writeln();
+
+  initArrays();
+
+  if (Class = S | Class = W | Class = A) then
+    c[0] := -3.0/8.0;
+    c[1] :=  1.0/32.0;
+    c[2] := -1.0/64.0;
+    c[3] := 0.0;
+  else
+    c[0] := -3.0/17.0;
+    c[1] :=  1.0/33.0;
+    c[2] := -1.0/61.0;
+    c[3] := 0.0;
+  end;
+end;
+
+
+procedure warmupMG();
+begin
+  if (warmup) then
+    mg3P();
+    resid(R[0], V, U[0], 0);
+
+    initArrays();
+  end;
+end;
+
+
+procedure printResults(rnm2: float; initime, runtime: float);
+var
+  verified: boolean;
+  epsilon: float = 1.e-8;
+  delta: double;
+begin
+  verified := false;
+  if (verifyValue != 0.0) then
+    delta := rnm2 - verifyValue;
+
+    if (abs(delta) <= epsilon) then
+      verified := true;
+      writeln("VERIFICATION SUCCESSFUL ");
+      writeln("L2 Norm is %20.12e": rnm2);
+      if (printError) then
+        writeln("Error is   %20.12e": delta);
+      end;
+    else
+      writeln("VERIFICATION FAILED");
+      writeln("L2 norm is ", rnm2);
+      writeln("The correct L2 Norm is ", verifyValue);
+    end;
+  else
+    writeln("Problem size unknown");
+    writeln("NO VERIFICATION PERFORMED");
+  end;
+  if (printTiming) then
+    writeln("Initialization time = %.4f seconds": initime);
+    writeln("Time in seconds     = %.4f seconds": runtime);
+  end;
+  write("Verification = ");
+  if (verified) then
+    writeln("SUCCESSFUL");
+  else
+    writeln("UNSUCCESSFUL");
+  end;
+end;
+
+
+procedure MG();
+free var
+  initTimer: timer;
+  benchTimer: timer;
+var
+  rnm2: double;
+  initime: double;
+  runtime: double;
+[Base] begin
+  ClearTimer(initTimer);
+  ClearTimer(benchTimer);
+
+  StartTimer(initTimer, 1);
+    initializeMG();
+    warmupMG();
+  StopTimer(initTimer);
+
+  StartTimer(benchTimer, 1);
+    rnm2 := computeMG();
+  StopTimer(benchTimer);
+
+  initime := max<< ReadTimer(initTimer);
+  runtime := max<< ReadTimer(benchTimer);
+
+  printResults(rnm2, initime, runtime);
+end;
+
+
+-- HELPER CODE FOLLOWS
+
+-- user defined reduction for finding locations of k min and max
+-- values in an array
+
+const
+  X: integer = 1;
+  Y: integer = 2;
+  Z: integer = 3;
+
+type valLoc = record
+                val: double;
+                loc: array [1..numDims] of integer;
+              end;
+
+const numMinMaxVals: integer = numCharges;
+
+type minmaxvals = record
+                    min, max: array [1..numMinMaxVals] of valLoc;
+                  end;
+
+procedure insert(inout minmax: array [1..numMinMaxVals] of valLoc; pos: integer;
+                 inout newValLoc: valLoc);
+var i: integer;
+begin
+  for i := numMinMaxVals downto pos+1 do
+    minmax[i] := minmax[i-1];
+  end;
+  minmax[i] := newValLoc;
+end;
+
+
+procedure minMaxK(inout ident: minmaxvals);
+var i: integer;
+begin
+  for i := 1 to numMinMaxVals do
+    ident.min[i].val := DBL_MAX;
+    ident.min[i].loc[] := 0;
+    ident.max[i].val := DBL_MIN;
+    ident.max[i].loc[] := 0;
+  end;
+end;
+
+
+procedure minMaxK(newval: double; x, y, z: integer; inout current: minmaxvals);
+var
+  i: integer;
+  insertMin: integer = 0;
+  insertMax: integer = 0;
+  newValLoc: valLoc;
+begin
+  for i := 1 to numMinMaxVals do
+    if (!insertMin & newval < current.min[i].val) then
+      insertMin := i;
+    end;
+    if (!insertMax & newval > current.max[i].val) then
+      insertMax := i;
+    end;
+  end;
+  if (insertMin | insertMax) then
+    newValLoc.val := newval;
+    newValLoc.loc[X] := x;
+    newValLoc.loc[Y] := y;
+    newValLoc.loc[Z] := z;
+    if (insertMin) then
+      insert(current.min, insertMin, newValLoc);
+    end;
+    if (insertMax) then
+      insert(current.max, insertMax, newValLoc);
+    end;
+  end;
+end;
+
+
+procedure minMaxK(inout set1, result: minmaxvals);
+var
+  set2: minmaxvals;
+  pos1: integer;
+  pos2: integer;
+  i: integer;
+begin
+  set2 := result;
+
+  pos1 := 1;
+  pos2 := 1;
+  for i := 1 to numMinMaxVals do
+    if (set1.min[pos1].val < set2.min[pos2].val) then
+      result.min[i] := set1.min[pos1];
+      pos1 += 1;
+    else
+      result.min[i] := set2.min[pos2];
+      pos2 += 1;
+    end;
+  end;
+
+  pos1 := 1;
+  pos2 := 1;
+  for i := 1 to numMinMaxVals do
+    if (set1.max[pos1].val > set2.max[pos2].val) then
+      result.max[i] := set1.max[pos1];
+      pos1 += 1;
+    else
+      result.max[i] := set2.max[pos2];
+      pos2 += 1;
+    end;
+  end;
+end;
+
+
+-- random number generation
+
+const
+  arand: double = 5.0^13;
+  s: double = 314159265.0;
+  r23: double = 0.5^23;
+  t23: double = 2.0^23;
+  r46: double = 0.5^46;
+  t46: double = 2.0^46;
+
+
+procedure randlc (inout x: double; a: double): double;
+var t1, t2, t3, t4, a1, a2, x1, x2, y, randval: double;
+begin
+  t1 := r23 * a;
+  a1 := to_integer(t1);
+  a2 := a - t23 * a1;
+
+  t1 := r23 * x;
+  x1 := to_integer(t1);
+  x2 := x - t23 * x1;
+  t1 := a1 * x2 + a2 * x1;
+  t2 := to_integer(r23 * t1);
+  y  := t1 - t23 * t2;
+  t3 := t23 * y + a2 * x2;
+  t4 := to_integer(r46 * t3);
+  x  := t3 - t46 * t4;
+  randval := r46 * x;
+
+  return randval;
+end;
+
+
+procedure long_randlc (n:integer): double;
+var
+   ik, kk: integer;
+   t1, t2, t3, randval: double;
+begin
+  kk := n;
+  t1 := s;
+  t2 := arand;
+
+  while (kk!=0) do
+    ik := kk / 2;
+    if ((2 * ik) != kk) then
+      t3 := randlc (t1, t2);
+    end;
+    if (kk > 0) then
+      t3 := randlc (t2, t2);
+    end;
+    kk := ik;
+  end;
+
+  randval := randlc(t1,arand);
+
+  return randval;
+end;
+
+
+config const chargeFilename: string = "";
+
+procedure zran3(inout V:[,,] double);
+var
+  chargefile:file;
+  chargeloc: minmaxvals;
+  i: integer;
+begin
+  chargefile := open(chargeFilename, file_read);
+  if (chargefile != znull) then
+    read(chargefile,chargeloc.max[].loc[]);
+    read(chargefile,chargeloc.min[].loc[]);
+  else
+    -- Generate the random numbers
+    V := long_randlc((Index1-1) + (Index2-1)*n + (Index3-1)*n*n);
+
+    -- Find the largest and smallest
+    chargeloc := minMaxK<< (V, Index1, Index2, Index3);
+  end;
+
+  if (printCharges) then
+    writeln("Positive Charges");
+    writeln("----------------");
+    for i := 1 to numCharges do
+      write("Charge %2d":i);
+      write(" located at (%3d":chargeloc.max[i].loc[X]);
+      write(",%3d":chargeloc.max[i].loc[Y]);
+      write(",%3d)":chargeloc.max[i].loc[Z]);
+      if (chargefile = znull & verbose) then
+        write(" V = %12.8e":chargeloc.max[i].val);
+      end;
+      writeln();
+    end;
+    writeln();
+    writeln("Negative Charges");
+    writeln("----------------");
+    for i := 1 to numCharges do
+      write("Charge %2d":i);
+      write(" located at (%3d":chargeloc.min[i].loc[X]);
+      write(",%3d":chargeloc.min[i].loc[Y]);
+      write(",%3d)":chargeloc.min[i].loc[Z]);
+      if (chargefile = znull & verbose) then
+        write(" V = %12.8e":chargeloc.min[i].val);
+      end;
+      writeln();
+    end;
+    writeln();
+  end;
+
+  -- initialize V
+  V := 0.0;
+  for i := 1 to numCharges do
+    [chargeloc.max[i].loc[X], 
+     chargeloc.max[i].loc[Y], 
+     chargeloc.max[i].loc[Z]] V := 1.0;
+    [chargeloc.min[i].loc[X],
+     chargeloc.min[i].loc[Y],
+     chargeloc.min[i].loc[Z]] V := -1.0;
+  end;
+end;

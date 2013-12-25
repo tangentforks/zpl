@@ -1,0 +1,6 @@
+#
+# etc/shmem/Macros - shmem Makefile macros
+#
+
+. $ZPLHOME/etc/Macros
+

@@ -1,0 +1,22 @@
+#!/bin/csh -f
+#
+# make mpi-lam up to date
+#
+
+# setenv XXX_OLD_ZPLCOMMLAYER \$ZPLCOMMLAYER
+
+mv ../include/istreams.h .istreams.h.old
+m4 ../include/istreams_m4.h > ../include/istreams.h
+mv ../include/permute.h .permute.h.old
+m4 ../include/permute_m4.h > ../include/permute.h
+setenv ZPLCOMMLAYER mpi
+setenv ZPLMPITYPE lam
+./zmake clean
+cd mpi
+./zmake clean
+./zmake "CFLAGS=-g"
+cd ..
+./zmake "CFLAGS=-g"
+
+# setenv ZPLCOMMLAYER \$XXX_OLD_ZPLCOMMLAYER
+# unsetenv XXX_OLD_ZPLCOMMLAYER

@@ -1,0 +1,364 @@
+--
+-- number of processors
+--
+extern constant
+  PROCESSORS : integer;
+
+extern prototype numLocales() : integer;
+extern free prototype localeID() : integer;
+
+--
+-- grid query functions
+--
+extern prototype GRIDPROCS(grd : grid; dim : integer) : integer;
+extern prototype GRIDPROC(grd : grid; dim : integer) : integer;
+
+--
+-- built-in distributions
+--
+extern prototype blk(lo, hi : integer) : integer;
+extern prototype cut(a : generic) : integer;
+extern prototype fourfer() : integer;
+extern prototype goofer() : integer;
+
+--
+-- region query functions: local low and local high
+--
+extern free prototype reglo(reg : region; dim : integer) : integer;
+extern free prototype reghi(reg : region; dim : integer) : integer;
+
+--
+-- Grids, Distributions, Regions, and Arrays
+--
+extern prototype _ARR_REG(inout a : genericensemble) : region;
+extern prototype _ARR_DIST(inout a : genericensemble) : distribution;
+extern prototype _ARR_GRD(inout a : genericensemble) : grid;
+extern prototype _REG_DIST(inout r : region) : distribution;
+extern prototype _REG_GRD(inout r : region) : grid;
+extern prototype _DIST_GRD(d : distribution) : grid;
+
+--
+-- file i/o
+--
+extern prototype open(s1, s2 : string) : file;
+extern prototype eof(f: file) : integer;
+extern prototype close(inout f : file) : integer;
+extern prototype bind_write_func(inout e : genericensemble; f : generic) : integer;
+extern prototype bind_read_func(inout e : genericensemble; f : generic) : integer;
+extern prototype unbind_write_func(inout e : genericensemble) : integer;
+extern prototype unbind_read_func(inout e : genericensemble) : integer;
+
+--
+-- built-in timers
+--
+extern type timer = opaque;
+extern prototype ClearTimer(inout t : timer);
+extern prototype StartTimer(free inout t : timer; sync : boolean);
+extern prototype StopTimer(free inout t : timer);
+extern free prototype ReadTimer(free inout t : timer) : double;
+
+--
+-- old built-in timers
+--
+extern prototype ResetTimer() : double;
+extern prototype CheckTimer() : double;
+extern free prototype UncResetTimer() : double;
+extern free prototype UncCheckTimer() : double;
+
+--
+-- identities for built-in scan/reduce operator min
+--
+extern constant _MIN_int_IDENTITY : integer;
+                _MIN__uint_IDENTITY : uinteger;
+                _MIN_long_IDENTITY : longint;
+                _MIN__ulong_IDENTITY : ulongint;
+                _MIN_float_IDENTITY : float;
+                _MIN_double_IDENTITY : double;
+                _MIN__zquad_IDENTITY : quad;
+                _MIN_fcomplex_IDENTITY : complex;
+                _MIN_dcomplex_IDENTITY : dcomplex;
+                _MIN_qcomplex_IDENTITY : qcomplex;
+
+--
+-- identities for built-in scan/reduce operator max
+--
+extern constant _MAX_int_IDENTITY : integer;
+                _MAX__uint_IDENTITY : uinteger;
+                _MAX_long_IDENTITY : longint;
+                _MAX__ulong_IDENTITY : ulongint;
+                _MAX_float_IDENTITY : float;
+                _MAX_double_IDENTITY : double;
+                _MAX__zquad_IDENTITY : quad;
+                _MAX_fcomplex_IDENTITY : complex;
+                _MAX_dcomplex_IDENTITY : dcomplex;
+                _MAX_qcomplex_IDENTITY : qcomplex;
+
+--
+-- identities for built-in scan/reduce operator add
+--
+extern constant _ADD_int_IDENTITY : integer;
+                _ADD__uint_IDENTITY : uinteger;
+                _ADD_long_IDENTITY : longint;
+                _ADD__ulong_IDENTITY : ulongint;
+                _ADD_float_IDENTITY : float;
+                _ADD_double_IDENTITY : double;
+                _ADD__zquad_IDENTITY : quad;
+                _ADD_fcomplex_IDENTITY : complex;
+                _ADD_dcomplex_IDENTITY : dcomplex;
+                _ADD_qcomplex_IDENTITY : qcomplex;
+
+--
+-- identities for built-in scan/reduce operator mult
+--
+extern constant _MULT_int_IDENTITY : integer;
+                _MULT__uint_IDENTITY : uinteger;
+                _MULT_long_IDENTITY : longint;
+                _MULT__ulong_IDENTITY : ulongint;
+                _MULT_float_IDENTITY : float;
+                _MULT_double_IDENTITY : double;
+                _MULT__zquad_IDENTITY : quad;
+                _MULT_fcomplex_IDENTITY : complex;
+                _MULT_dcomplex_IDENTITY : dcomplex;
+                _MULT_qcomplex_IDENTITY : qcomplex;
+	 
+--
+-- identities for built-in scan/reduce operator and
+--
+extern constant _AND_int_IDENTITY : integer;
+                _AND__uint_IDENTITY : uinteger;
+                _AND_long_IDENTITY : longint;
+                _AND__ulong_IDENTITY : ulongint;
+                _AND_float_IDENTITY : float;
+                _AND_double_IDENTITY : double;
+                _AND__zquad_IDENTITY : quad;
+                _AND_fcomplex_IDENTITY : complex;
+                _AND_dcomplex_IDENTITY : dcomplex;
+                _AND_qcomplex_IDENTITY : qcomplex;
+	 
+--
+-- identities for built-in scan/reduce operator or
+--
+extern constant _OR_int_IDENTITY : integer;
+                _OR__uint_IDENTITY : uinteger;
+                _OR_long_IDENTITY : longint;
+                _OR__ulong_IDENTITY : ulongint;
+                _OR_float_IDENTITY : float;
+                _OR_double_IDENTITY : double;
+                _OR__zquad_IDENTITY : quad;
+                _OR_fcomplex_IDENTITY : complex;
+                _OR_dcomplex_IDENTITY : dcomplex;
+                _OR_qcomplex_IDENTITY : qcomplex;
+
+--
+-- identities for built-in scan/reduce operator band
+--
+extern constant _BAND_int_IDENTITY : integer;
+                _BAND__uint_IDENTITY : uinteger;
+                _BAND_long_IDENTITY : longint;
+                _BAND__ulong_IDENTITY : ulongint;
+                _BAND_float_IDENTITY : float;
+                _BAND_double_IDENTITY : double;
+                _BAND__zquad_IDENTITY : quad;
+                _BAND_fcomplex_IDENTITY : complex;
+                _BAND_dcomplex_IDENTITY : dcomplex;
+                _BAND_qcomplex_IDENTITY : qcomplex;
+
+--
+-- identities for built-in scan/reduce operator bor
+--
+extern constant _BOR_int_IDENTITY : integer;
+                _BOR__uint_IDENTITY : uinteger;
+                _BOR_long_IDENTITY : longint;
+                _BOR__ulong_IDENTITY : ulongint;
+                _BOR_float_IDENTITY : float;
+                _BOR_double_IDENTITY : double;
+                _BOR__zquad_IDENTITY : quad;
+                _BOR_fcomplex_IDENTITY : complex;
+                _BOR_dcomplex_IDENTITY : dcomplex;
+                _BOR_qcomplex_IDENTITY : qcomplex;
+
+--
+-- identities for built-in scan/reduce operator xor
+--
+extern constant _XOR_int_IDENTITY : integer;
+                _XOR__uint_IDENTITY : uinteger;
+                _XOR_long_IDENTITY : longint;
+                _XOR__ulong_IDENTITY : ulongint;
+                _XOR_float_IDENTITY : float;
+                _XOR_double_IDENTITY : double;
+                _XOR__zquad_IDENTITY : quad;
+                _XOR_fcomplex_IDENTITY : complex;
+                _XOR_dcomplex_IDENTITY : dcomplex;
+                _XOR_qcomplex_IDENTITY : qcomplex;
+
+--
+-- permute runtime interface
+--
+extern type _permmap = record
+                         garbage : integer;
+                       end;
+
+extern type _permdata = record
+                          garbage : integer;
+                        end;
+
+extern var _null_array : genericensemble;
+           _null_distribution : distribution;
+
+extern prototype _CALL_PERM_Init(numpermmaps : integer);
+extern prototype _CALL_PERM_MS(inout pm : _permmap; setup : integer; reg : region; dims, num : integer; filename : string; lineno : integer);
+extern prototype _CALL_PERM_IR(pm : _permmap; setup : integer);
+extern prototype _CALL_PERM_IN(pm : _permmap; setup : integer; scatter, eltsize : integer; dst, src : genericensemble; reg : region; prilevels, dstsrcconflict, dstdead, srcdead, dstdirect, srcdirect : integer);
+extern prototype _CALL_PERM_MD(pm : _permmap);
+extern prototype _CALL_PERM_DS(num : integer; pm : _permmap; inout pd : _permdata; scatter, eltsize : integer; dst, src : genericensemble; reg : region; prilevels, dstsrcconflict, dstdead, srcdead, dstdirect, srcdirect : integer);
+extern prototype _CALL_PERM_DR(pm : _permmap; inout pd : _permdata; scatter : integer; dst, src : genericensemble);
+extern prototype _CALL_PERM_DN(pm : _permmap; inout pd : _permdata; scatter : integer);
+extern prototype _CALL_PERM_DD(num : integer; pm : _permmap; inout pd : _permdata; scatter : integer);
+extern prototype _CALL_PERM_Done();
+
+extern prototype _PERM_FAST_GCI_COMP_1D(inout pm : _permmap; setup, scatter : integer; reg : region; dist : distribution; i1 : integer);
+extern prototype _PERM_FAST_GCI_COMP_2D(inout pm : _permmap; setup, scatter : integer; reg : region; dist : distribution; i1, i2 : integer);
+extern prototype _PERM_FAST_GCI_COMP_3D(inout pm : _permmap; setup, scatter : integer; reg : region; dist : distribution; i1, i2, i3 : integer);
+extern prototype _PERM_FAST_GCI_COMP_4D(inout pm : _permmap; setup, scatter : integer; reg : region; dist : distribution; i1, i2, i3, i4 : integer);
+extern prototype _PERM_FAST_GCI_COMP_5D(inout pm : _permmap; setup, scatter : integer; reg : region; dist : distribution; i1, i2, i3, i4, i5 : integer);
+extern prototype _PERM_FAST_GCI_COMP_6D(inout pm : _permmap; setup, scatter : integer; reg : region; dist : distribution; i1, i2, i3, i4, i5, i6 : integer);
+
+extern prototype _PERM_GCI_BEGIN_1D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_GCI_BEGIN_2D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_GCI_BEGIN_3D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_GCI_BEGIN_4D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_GCI_BEGIN_5D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_GCI_BEGIN_6D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_GC_TOPROC(map, dim, uid : integer);
+extern prototype _PERM_GC_1D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_GC_2D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_GC_3D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_GC_4D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_GC_5D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_GC_6D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_GI_1D(direct : integer; inout pm : _permmap; prilevels, uid, map1 : integer);
+extern prototype _PERM_GI_2D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2 : integer);
+extern prototype _PERM_GI_3D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3 : integer);
+extern prototype _PERM_GI_4D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3, map4 : integer);
+extern prototype _PERM_GI_5D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3, map4, map5 : integer);
+extern prototype _PERM_GI_6D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3, map4, map5, map6 : integer);
+extern prototype _PERM_GCI_END(inout pm : _permmap; prplevels, prilevels, dims, uid : integer);
+
+extern prototype _PERM_NP_GCI_BEGIN_1D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_GCI_BEGIN_2D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_GCI_BEGIN_3D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_GCI_BEGIN_4D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_GCI_BEGIN_5D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_GCI_BEGIN_6D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_GC_TOPROC(map, dim, uid : integer);
+extern prototype _PERM_NP_GC_1D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_GC_2D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_GC_3D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_GC_4D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_GC_5D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_GC_6D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_GI_1D(direct : integer; inout pm : _permmap; prilevels, uid, map1 : integer);
+extern prototype _PERM_NP_GI_2D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2 : integer);
+extern prototype _PERM_NP_GI_3D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3 : integer);
+extern prototype _PERM_NP_GI_4D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3, map4 : integer);
+extern prototype _PERM_NP_GI_5D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3, map4, map5 : integer);
+extern prototype _PERM_NP_GI_6D(direct : integer; inout pm : _permmap; prilevels, uid, map1, map2, map3, map4, map5, map6 : integer);
+extern prototype _PERM_NP_GCI_END(inout pm : _permmap; prplevels, prilevels, dims, uid : integer);
+
+extern prototype _PERM_NI_GCI_BEGIN_1D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NI_GCI_BEGIN_2D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NI_GCI_BEGIN_3D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NI_GCI_BEGIN_4D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NI_GCI_BEGIN_5D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NI_GCI_BEGIN_6D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NI_GC_TOPROC(map, dim, uid : integer);
+extern prototype _PERM_NI_GC_1D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NI_GC_2D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NI_GC_3D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NI_GC_4D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NI_GC_5D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NI_GC_6D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NI_GI(inout pm : _permmap; uid : integer);
+extern prototype _PERM_NI_GCI_END(inout pm : _permmap; prplevels, prilevels, dims, uid : integer);
+
+extern prototype _PERM_NP_NI_GCI_BEGIN_1D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_NI_GCI_BEGIN_2D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_NI_GCI_BEGIN_3D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_NI_GCI_BEGIN_4D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_NI_GCI_BEGIN_5D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_NI_GCI_BEGIN_6D(inout pm : _permmap; setup : integer; uid : integer; dist : distribution);
+extern prototype _PERM_NP_NI_GC_TOPROC(map, dim, uid : integer);
+extern prototype _PERM_NP_NI_GC_1D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_NI_GC_2D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_NI_GC_3D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_NI_GC_4D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_NI_GC_5D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_NI_GC_6D(inout pm : _permmap; prplevels, uid : integer);
+extern prototype _PERM_NP_NI_GI(inout pm : _permmap; uid : integer);
+extern prototype _PERM_NP_NI_GCI_END(inout pm : _permmap; prplevels, prilevels, dims, uid : integer);
+
+extern prototype _SCATTER_GD_PRE_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _SCATTER_GD_PRE_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _SCATTER_GD(src : generic; inout pm : _permmap; inout pd : _permdata; prplevels, uid : integer);
+extern prototype _SCATTER_GD_POST_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _SCATTER_GD_POST_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _GATHER_PD_PRE_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _GATHER_PD_PRE_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _GATHER_PD(inout dst : generic; inout pm : _permmap; inout pd : _permdata; prplevels, uid : integer);
+extern prototype _GATHER_PD_POST_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _GATHER_PD_POST_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+
+extern prototype _SCATTER_NP_GD_PRE_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer; dist : distribution);
+extern prototype _SCATTER_NP_GD_PRE_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _SCATTER_NP_GD(src : generic; inout pm : _permmap; inout pd : _permdata; prplevels, uid : integer);
+extern prototype _SCATTER_NP_GD_POST_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _SCATTER_NP_GD_POST_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _GATHER_NP_PD_PRE_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer; dist : distribution);
+extern prototype _GATHER_NP_PD_PRE_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _GATHER_NP_PD(inout dst : generic; inout pm : _permmap; inout pd : _permdata; prplevels, uid : integer);
+extern prototype _GATHER_NP_PD_POST_NLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+extern prototype _GATHER_NP_PD_POST_MLOOP(inout pm : _permmap; inout pd : _permdata; srctype : generic; prplevels, uid : integer);
+
+extern constant
+  _assignop_arbitrary : integer;
+  _assignop_plus : integer;
+  _rgridremap : integer;
+
+extern prototype _SCATTER_PD_PRE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_PD(inout dst : generic; assignop, dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_PD_POST_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD_PRE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD(src : generic; dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD_POST_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_PD_LOOP_PRE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_PD_LOOP(inout dst : generic; assignop, dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_PD_LOOP_ELSE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_PD_LOOP_BAIL(inout dst : generic; assignop, dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_PD_LOOP_POST_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD_LOOP_PRE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD_LOOP(src : generic; dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD_LOOP_ELSE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD_LOOP_BAIL(src : generic; dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_GD_LOOP_POST_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+
+extern prototype _SCATTER_NI_PD_PRE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_NI_PD(inout dst : generic; assignop, dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _SCATTER_NI_PD_POST_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_NI_GD_PRE_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_NI_GD(src : generic; dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+extern prototype _GATHER_NI_GD_POST_NLOOP(dims, prilevels : integer; srctype : generic; inout pm : _permmap; inout pd : _permdata; uid : integer);
+
+extern prototype _BOUND_CHECK(r : region; a : genericensemble; lineno : integer);
+
+extern prototype _DESTROY(x, y : generic);
+extern prototype _PRESERVE(x, y : generic);
+
+extern prototype _UPDATE_REGION(R1, R2 : region; preserve : integer);
+extern prototype _UPDATE_DISTRIBUTION(D1, D2 : distribution; preserve : integer);
+extern prototype _UPDATE_GRID(G1, G2 : grid; preserve : integer);
+
+extern prototype _PROCESS_ENSEMBLES();
+
+extern prototype _COPY_REGION(inout R1 : region; R2 : region; process_arrays : integer);
+extern prototype _COPY_DISTRIBUTION(inout D1 : distribution; D2 : distribution; process_arrays : integer);
+extern prototype _COPY_GRID(inout G1 : grid; G2 : grid; process_arrays : integer);

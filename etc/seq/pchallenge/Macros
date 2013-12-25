@@ -1,0 +1,9 @@
+#!/bin/sh
+
+. $ZPLHOME/etc/seq/Macros
+
+CCVER="echo version number unknown -- check IRIX version"
+
+CFLAGS="$CFLAGS -64"
+LFLAGS="$LFLAGS -64"
+

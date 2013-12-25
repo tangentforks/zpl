@@ -1,0 +1,13 @@
+#
+# etc/mpi/sparc-solaris/Macros - mpi sparc-solaris Macros
+#
+
+CC=${CC:-cc}
+CFLAGS=${CFLAGS:-"-fast"}
+LFLAGS=${LFLAGS:-"-fast"}
+CCVER=${CCVER:-"cc -V"}
+
+. $ZPLHOME/etc/seq/Macros
+
+#CFLAGS="$CFLAGS -I/opt/SUNWhpc/include "
+#LFLAGS="-L/opt/SUNWhpc/lib"

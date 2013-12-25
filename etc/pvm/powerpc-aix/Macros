@@ -1,0 +1,7 @@
+#
+# etc/pvm/powerpc-aix/Macros - pvm powerpc-aix Makefile macros
+#
+
+. $ZPLHOME/etc/pvm/Macros
+
+CCVER="echo `man $CC | grep Version`"

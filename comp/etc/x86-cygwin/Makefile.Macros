@@ -1,0 +1,4 @@
+include $(ZCROOTDIR)/etc/Makefile.Macros.gcc
+MAKEDEPEND_PRE = gcc -M
+MAKEDEPEND_POST = > Makefile.depend
+

@@ -1,0 +1,8 @@
+CC = gcc
+CCVER = $(CC) --version
+LINK = $(CC)
+YFLAGS = -vdt
+MAKEDEPEND_PRE = makedepend -f Makefile.depend
+MAKEDEPEND_POST = 
+
+

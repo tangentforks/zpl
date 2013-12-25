@@ -1,0 +1,13 @@
+#
+# etc/shmem/t3e/Macros
+#
+
+MAKEDEPEND_PRE="cc -M"
+MAKEDEPEND_POST="> Makefile.depend"
+
+. $ZPLHOME/etc/shmem/Macros
+
+START_CFLAGS="$START_CFLAGS -hcommand"
+START_LFLAGS="$START_LFLAGS -hcommand"
+
+CFLAGS="$CFLAGS -hlist=m"

@@ -1,0 +1,7 @@
+#
+# etc/seq/powerpc-aix/Macros - seq powerpc-aix Makefile macros
+#
+
+. $ZPLHOME/etc/seq/Macros
+
+CCVER="echo `man $CC | grep Version`"

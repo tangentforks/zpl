@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# src/pvm/zmake - builds pvm machine dependent zpl libraries
+
+# quote all args in string QARGS
+QARGS=""
+while [ $# -gt 0 ] ; do
+	QARGS="$QARGS \"$1\""
+	shift
+done
+
+ZPLHOME=../..
+export ZPLHOME
+
+# MAKEFILE is the Makefile used to compile the libs
+MAKEFILE=$ZPLHOME/src/$ZPLCOMMLAYER/Makefile
+
+# ZMAKELIBBASE is the script used to actually compile the libs
+ZMAKELIBBASE=$ZPLHOME/etc/zmake.lib.base
+
+# file $ZMAKELIBBASE must exist and be readable
+if [ ! -r $ZMAKELIBBASE ] ; then
+	echo "ERROR: Unable to read zmake file."
+	echo "       ($ZMAKELIBBASE)"
+	echo "       Make sure environment variable ZPLHOME is properly set."
+	echo "Aborting."
+	exit 1
+fi
+
+if [ ! -f Makefile.depend ]; then \
+    echo "" > Makefile.depend; \
+fi
+
+eval "$ZMAKELIBBASE $MAKEFILE $QARGS"
+
+exit $?

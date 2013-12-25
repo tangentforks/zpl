@@ -1,0 +1,7 @@
+#
+# etc/pvm/mips-irix/Macros - pvm mips-irix Makefile macros
+#
+
+. $ZPLHOME/etc/pvm/Macros
+
+CCVER="echo version number unknown -- check IRIX version"

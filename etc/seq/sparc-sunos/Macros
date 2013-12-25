@@ -1,0 +1,9 @@
+#
+# etc/seq/sparc-sunos/Macros - seq sparc-sunos Makefile macros
+#
+
+CC=${CC:-gcc}
+CCVER=${CCVER:-"gcc -v"}
+
+. $ZPLHOME/etc/seq/Macros
+

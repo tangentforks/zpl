@@ -1,0 +1,44 @@
+default: all
+
+all: Makefile.depend FORCE
+	@ZCMACROS=`../PickMacros default $(ZCROOTDIR)` && \
+	make -f $(ZCROOTDIR)/Makefile.recurse all \
+	"ZCMACROS=$$ZCMACROS" "ZCROOTDIR=$(ZCROOTDIR)" "OBJ=$(OBJ)"
+
+release: Makefile.depend FORCE
+	@ZCMACROS=`../PickMacros release $(ZCROOTDIR)` && \
+	make -f $(ZCROOTDIR)/Makefile.recurse all \
+	"ZCMACROS=$$ZCMACROS" "ZCROOTDIR=$(ZCROOTDIR)" "OBJ=$(OBJ)"
+
+debug: Makefile.depend FORCE
+	@ZCMACROS=`../PickMacros debug $(ZCROOTDIR)` && \
+	make -f $(ZCROOTDIR)/Makefile.recurse all \
+	"ZCMACROS=$$ZCMACROS" "ZCROOTDIR=$(ZCROOTDIR)" "OBJ=$(OBJ)"
+
+devel: Makefile.depend FORCE
+	@ZCMACROS=`../PickMacros devel $(ZCROOTDIR)` && \
+	make -f $(ZCROOTDIR)/Makefile.recurse all \
+	"ZCMACROS=$$ZCMACROS" "ZCROOTDIR=$(ZCROOTDIR)" "OBJ=$(OBJ)"
+
+clean: Makefile.depend FORCE
+	@ZCMACROS=`../PickMacros clean $(ZCROOTDIR)` && \
+	make -f $(ZCROOTDIR)/Makefile.recurse clean \
+	"ZCMACROS=$$ZCMACROS" "ZCROOTDIR=$(ZCROOTDIR)"
+
+clobber: Makefile.depend FORCE
+	@ZCMACROS=`../PickMacros clobber $(ZCROOTDIR)` && \
+	make -f $(ZCROOTDIR)/Makefile.recurse clobber \
+	"ZCMACROS=$$ZCMACROS" "ZCROOTDIR=$(ZCROOTDIR)"
+
+depend:	Makefile.depend FORCE
+	@ZCMACROS=`../PickMacros depend $(ZCROOTDIR)` && \
+	make -f $(ZCROOTDIR)/Makefile.recurse depend \
+	"ZCMACROS=$$ZCMACROS" "ZCROOTDIR=$(ZCROOTDIR)" "SRC=$(SRC)"
+
+Makefile.depend:
+	@if [ ! -f Makefile.depend ]; then \
+		echo "" > Makefile.depend; \
+	fi
+		
+
+FORCE:

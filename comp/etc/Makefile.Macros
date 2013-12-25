@@ -1,0 +1,3 @@
+
+include $(ZCROOTDIR)/etc/Makefile.Macros-base
+CFLAGS = -O2

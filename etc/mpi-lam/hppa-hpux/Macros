@@ -1,0 +1,9 @@
+#
+# etc/mpi/hppa-hpux/Macros - mpi sparc-solaris Makefile macros
+#
+
+START_CC=${START_CC:-gcc}
+START_CCVER=${START_CCVER:-"gcc -v"}
+START_LINK=${START_LINK:-$START_CC}
+
+. $ZPLHOME/etc/mpi-lam/Macros

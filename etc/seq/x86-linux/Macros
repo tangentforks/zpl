@@ -1,0 +1,7 @@
+#
+# etc/seq/x86-linux/Macros - seq x86-linux Makefile macros
+#
+
+CCVER="cc -v"
+
+. $ZPLHOME/etc/seq/Macros

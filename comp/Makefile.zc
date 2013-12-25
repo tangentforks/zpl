@@ -1,0 +1,179 @@
+ZCROOTDIR=.
+include $(ZCMACROS)
+
+#
+#
+# Initial Rewrite:	22 July 1993
+# Author:		Sung-Eun Choi
+#
+# Notes:		To add new directories, search for the word "NEW-DIR"
+#			and follow directions.
+#			To add new files to an existing directory, search for
+#			the word "NEW-FILE" and follow directions.
+# Modifications:        11 April 1997 (sungeun)
+#                       Change name of the binary to zc0.
+#                       1 June 1998 (sungeun)
+#                       January 2003, brad ripped apart
+#
+
+ZC=../bin/zc
+ZC0=../bin/zc0
+
+
+default: all
+
+all: $(ZC0) $(ZC)
+
+devel: all TAGS
+
+TAGS: $(ZC0) $(ZC)
+	@echo "Updating TAGS file.. (please wait)"
+	@etags */*.c */*.h
+
+debug: all
+
+release: all
+
+depend:
+
+clean: FORCE
+	rm -f $(ZC) $(ZC0) *.o
+
+clobber: clean
+	rm -f *~ core
+
+############################################################
+#
+# NEW-DIR
+# NEW-FILE
+#
+# Add new directory identifiers and object files here
+# (alphabetical order and comments, please)
+#
+
+# ADT stuff
+AD=	adt/
+ADOBJ=  $(AD)callsite.o $(AD)generic_stack.o $(AD)glist.o
+
+# code generation
+CG=	ccodegen/
+CGOBJ=	$(CG)Agen.o $(CG)Bgen.o $(CG)Cgen.o $(CG)Dgen.o $(CG)Dgenhelp.o\
+	$(CG)Fgen.o $(CG)IOgen.o $(CG)Irongen.o\
+	$(CG)Mgen.o $(CG)Privgen.o $(CG)Profgen.o\
+	$(CG)Redgen.o $(CG)Repgen.o $(CG)SRgen.o $(CG)Scangen.o $(CG)Spsgen.o\
+	$(CG)Stackgen.o $(CG)WRgen.o $(CG)Wgen.o $(CG)beautify.o\
+	$(CG)cmplx_ens.o $(CG)checkpoint.o
+
+# communication insertion
+CM=	comm/
+CMOBJ=	$(CM)comm.o $(CM)commstats.o
+
+# debug stuff
+DE=	debug/
+DEOBJ=	$(DE)bdebug.o $(DE)dbg_code_gen.o
+
+# graph-building code
+GR=	graph/
+GROBJ=	$(GR)callgraph.o $(GR)depgraph.o $(GR)inout.o $(GR)scope.o $(GR)set.o $(GR)live.o
+
+# checkpoint stuff
+CP=     checkpoint/
+CPOBJ=  $(CP)/insert_checkpoints.o
+
+# interproc and callgraph analysis stuff
+IP=	interproc/
+IPOBJ=	$(IP)callanal.o $(IP)cganal.o $(IP)covanal.o $(IP)interproc.o\
+	$(IP)paranal.o $(IP)setcid.o $(IP)tasklist.o
+
+# implicit regions
+IR=	iregion/
+IROBJ=	$(IR)fluff.o
+
+# main stuff
+MA=	main/
+MAOBJ=	$(MA)error.o $(MA)fixup.o $(MA)getopt.o $(MA)global.o\
+	$(MA)main.o $(MA)runpass.o $(MA)usage.o $(MA)version.o
+
+# optimizations
+OP=	opt/
+OPOBJ=	$(OP)contraction.o  $(OP)copts.o $(OP)deadvarelim.o $(OP)dvlist.o\
+	$(OP)floodopt.o $(OP)floodtile.o $(OP)ntablet.o $(OP)nudge.o\
+	$(OP)permcomm.o $(OP)runtime_checks.o $(OP)stencil.o $(OP)strength.o
+
+# parser stuff
+PS=	parse/
+PSOBJ=	$(PS)gettoken.o $(PS)parser.o $(PS)scan.o
+
+# BLC -- my codegen stuff for ensembles, regions, Makefile, etc.
+RT=	runtime/
+RTOBJ=	$(RT)accessors.o $(RT)config.o $(RT)direction.o\
+	$(RT)genfluff.o $(RT)make.o $(RT)runtime.o \
+	$(RT)perregion.o $(RT)perregion_sparse.o $(RT)typeensemble.o
+
+# statement stuff
+SMT=	statement/
+SMTOBJ=	$(SMT)allocstmt.o $(SMT)buildstmt.o $(SMT)buildzplstmt.o\
+	$(SMT)stmtutil.o
+
+# symboltable stuff
+SY=	symbol/
+SYOBJ=	$(SY)buildsym.o $(SY)buildsymutil.o $(SY)createvar.o\
+	$(SY)datatype.o $(SY)stack.o $(SY)symbol.o $(SY)value.o
+
+# temp insertion
+TM=	temps/
+TMOBJ=	$(TM)cda.o $(TM)ensparam.o $(TM)function_temps.o $(TM)scan_temps.o
+
+# transformations of the AST
+XF=     transform/
+XFOBJ=  $(XF)a2nloops.o $(XF)cmloops.o $(XF)hierarchy.o \
+        $(XF)mscan.o $(XF)r2mloops.o $(XF)red2mloops.o $(XF)retens.o \
+	$(XF)perm2mloops.o
+
+# traversal routines
+TR=	traverse/
+TROBJ=	$(TR)bb_traverse.o $(TR)idfa_traverse.o $(TR)traverse.o
+
+# type checking
+TY = type/
+TYOBJ= $(TY)typecheck.o $(TY)typeinfo.o
+
+# utilities functions
+UT = util/
+UTOBJ = $(UT)alias.o $(UT)coverage.o $(UT)datatype.o $(UT)dimension.o\
+	$(UT)expr.o $(UT)function.o $(UT)init.o $(UT)mloop.o $(UT)rmstack.o\
+	$(UT)scale.o $(UT)statement.o $(UT)symboltable.o $(UT)zutil.o
+
+ZCOBJ= $(MA)usage.o $(MA)error.o $(MA)version.o $(MA)zc.o 
+
+
+# Common Object files
+#
+# NEW-DIR
+#
+# Add object file identifier here...
+#
+COBJ=	$(ADOBJ) $(CGOBJ) $(CMOBJ)\
+	$(DEOBJ)\
+	$(GROBJ) $(CPOBJ) $(IPOBJ) $(IROBJ)\
+	$(MAOBJ) $(OPOBJ) $(PSOBJ)\
+	$(RTOBJ) $(SMTOBJ) $(SYOBJ)\
+	$(TMOBJ) $(XFOBJ) $(TROBJ)\
+	 $(TYOBJ) $(UTOBJ)
+
+############################################################
+
+
+#
+# Use the following LIBS
+#
+LIBS=
+
+
+$(ZC0): $(COBJ)
+	$(LINK) $(LFLAGS) -o $(ZC0) $(COBJ) $(LIBS)
+
+$(ZC): $(ZC0) $(ZCOBJ)
+	$(LINK) $(LFLAGS) -o $(ZC) $(ZCOBJ)
+
+FORCE:

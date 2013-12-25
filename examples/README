@@ -1,0 +1,86 @@
+This directory contains some sample ZPL programs for your
+enjoyment. The files are as follows:
+
+hello.z    -- a simple "hello world" program (no parallelism here!)
+jacobi.z   -- a program that performs a class Jacobi iteration
+summa.z    -- matrix multiplication using the SUMMA algorithm
+mg.z       -- the NAS MG benchmark written in ZPL
+
+Each file also has a corresponding .out file containing its output.
+
+Each program, except the "hello world" program, is explained a bit
+more below. You may also run any program with the "-h" flag to find
+out about runtime flags and the configuration variables of that
+program.
+
+
+jacobi.z
+========
+
+To run jacobi on one processor, use
+
+	jacobi -p1
+
+You may change the problem size (n) and halting tolerance (epsilon)
+using the configuration variables as follows:
+
+	jacobi -p1 -sn=300 -sepsilon=0.05
+
+Other configuration variables include timing and verbose which let the
+user of the jacobi program time the execution of the iterations and
+print out the final array respectively.
+
+
+summa.z
+=======
+
+The bulk of the work for this program, which implements the SUMMA
+algorithm for matrix multiplication, is in a routine called "Summa"
+that simply runs the algorithm a specified number of times (iters),
+and optionally prints the input (printinput), output (verbose) and
+runtime (dotiming) if the user desires.
+
+The rest of the code is designed to initialize the matrices. By default,
+the matrices (m x n x p) are filled with a value ramp between 1.0 and
+2.0. However, the user can also specify input files (Afilename, Bfilename)
+that store the number of rows, number of columns and matrix values (see
+mat/*.mat). For example:
+
+	summa -p1 -sAfilename=mat/A.mat -sBfilename=mat/B.mat
+
+If no input files are used, the user can also explicitly set the
+matrix dimensions (m x n, and n x p) to be something other than the
+default (default_size).
+
+
+mg.z
+====
+
+This is a ZPL implementation of the NAS MG benchmark.  It uses indexed
+arrays of arrays, regions, and directions (strided by increasing
+powers of two) in order to express the hierarchical arrays used in the
+benchmark.  For standard NAS class sizes, simply set the Class config
+constant to W, A, B, C, or D as desired (S is the default).  
+
+By default, the charge locations are computed via a user-defined
+reduction, minMaxK that is designed to find the k smallest and largest
+values in an array.  The charge locations may also be read in from
+data files, and files corresponding to the NAS problem sizes are
+located in the mg-charges/ subdirectory for reference.  If you'd like
+to run cases other than the NAS benchmarks, you can override specific
+benchmark parameters like the problem size, number of iterations, or
+charge locations using other configuration constants.  The printTiming
+config constant can be used to obtain timings for performance studies.
+For example, a run might look like this:
+
+	mg -p1 -sClass=A -sdoTiming=true
+
+Note that the current performance of MG in ZPL is somewhat less than
+that which has been reported in past publications due to changes in
+the implementation which have temporarily disabled optimizations to
+the stencil patterns.  If the lack of these optimizations creates a
+problem for you, please let us know and we will increase the priority
+of re-enabling them on our todo list.
+
+
+

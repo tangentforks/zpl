@@ -1,0 +1,10 @@
+#
+# etc/seq/x1/Macros - seq x1 Makefile macros
+#
+
+MAKEDEPEND_PRE="cc -M"
+MAKEDEPEND_POST="> Makefile.depend"
+
+. $ZPLHOME/etc/seq/Macros
+
+CFLAGS="$CFLAGS -hlist=m"

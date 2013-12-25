@@ -1,0 +1,13 @@
+#
+# etc/mpi/x1/Macros - mpi x1 Makefile macros
+#
+
+MAKEDEPEND_PRE="cc -M"
+MAKEDEPEND_POST="> Makefile.depend"
+
+. $ZPLHOME/etc/mpi/Macros
+
+START_CFLAGS="$START_CFLAGS -hcommand"
+START_LFLAGS="$START_LFLAGS -hcommand"
+CFLAGS="$CFLAGS -DNO_MPI_STATUS_IGNORE -hlist=m"
+FILE3=no

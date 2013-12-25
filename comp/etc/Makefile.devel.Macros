@@ -1,0 +1,7 @@
+include $(ZCROOTDIR)/etc/Makefile.Macros-base
+
+NOWARNFLAGS = -g
+WARNFLAGS = -Wall
+
+CFLAGS = $(NOWARNFLAGS) $(WARNFLAGS) -DRELEASE_VER=0
+

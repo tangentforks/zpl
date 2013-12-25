@@ -1,0 +1,9 @@
+#
+# etc/seq/mips-irix/Macros - seq mips-irix Makefile macros
+#
+
+CC="gcc"
+CCVER="gcc --version"
+
+. $ZPLHOME/etc/seq/Macros
+

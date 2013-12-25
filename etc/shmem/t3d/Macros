@@ -1,0 +1,11 @@
+#
+# etc/shmem/t3e/Macros
+#
+
+. $ZPLHOME/etc/shmem/Macros
+
+CFLAGS="$CFLAGS -Tcray-t3d"
+LFLAGS="$LFLAGS -Tcray-t3d"
+
+MD_LIBPATHS=-L/mpp/lib
+MD_LIBS=-lsma

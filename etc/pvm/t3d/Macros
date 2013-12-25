@@ -1,0 +1,16 @@
+#
+# etc/pvm/t3d/Makefile - t3d pvm Makefile macros
+#
+
+. $ZPLHOME/etc/pvm/Macros
+
+CFLAGS="$CFLAGS -Tcray-t3d"
+LFLAGS="$LFLAGS -Tcray-t3d"
+
+MD_LIB_INCLS=""
+MD_LIBPATHS=-L/mpp/lib
+MD_LIBS=-lsma
+
+START_MD_LIBS=""
+
+FILE3=no 

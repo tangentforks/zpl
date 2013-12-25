@@ -1,0 +1,26 @@
+
+ZPL DIRECTORY STRUCTURE
+=======================
+
+README            -- general information
+DIRS              -- this file
+INSTALL           -- instructions on installing and using ZPL
+LICENSE           -- the ZPL license agreement
+bin/              -- location of the ZPL binaries (zc, zc0) after building
+comp/             -- ZPL compiler sources
+  etc/            -- tool & option specifications for building the compiler
+    $ZPLTARGET/   -- ZPLTARGET-specific overrides
+etc/              -- tool & option specifications for building the runtime
+  $ZPLCOMMLAYER/  -- ZPLCOMMLAYER-specific overrides
+    $ZPLTARGET/   -- ZPLTARGET-specific overrides
+examples/         -- sample ZPL codes
+include/          -- general runtime header files
+  $ZPLCOMMLAYER/  -- ZPLCOMMLAYER-specific runtime header files
+    $ZPLTARGET/   -- ZPLTARGET-specific overrides
+lib/              -- runtime libraries will end up in this subtree...
+  $ZPLCOMMLAYER/  -- ...sorted out by ZPLCOMMLAYER...
+    $ZPLTARGET/   -- ...and ZPLTARGET...
+man/              -- man pages for the compiler (likely out-of-date)
+src/              -- general runtime source files
+  $ZPLCOMMLAYER/  -- ZPLCOMMLAYER-specific source files
+    $ZPLTARGET/   -- ZPLTARGET-specific overrides

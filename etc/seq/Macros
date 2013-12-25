@@ -1,0 +1,8 @@
+#
+# etc/seq/Macros - seq Makefile macros
+#
+
+. "$ZPLHOME/etc/Macros"
+
+FILE1=no
+

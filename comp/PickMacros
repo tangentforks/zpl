@@ -1,0 +1,50 @@
+#!/bin/sh
+
+target=""
+
+if [ $# -eq 2 ]; then
+target=$1
+rootdir=$2
+else
+echo "$0 must be invoked with a specific target"
+exit 1
+fi
+
+if [ "$target" = "default" ]; then
+if [ -r $rootdir/.make.default ]; then
+target=`cat $rootdir/.make.default`
+fi
+fi
+
+if [ "$target" = "debug" ]; then
+ZCMACROSBASE="Makefile.debug.Macros"
+else if [ "$target" = "devel" ]; then
+ZCMACROSBASE="Makefile.devel.Macros"
+else
+ZCMACROSBASE="Makefile.Macros"
+fi
+fi
+
+ZCMACROS=""
+
+if [ "$ZPLSOURCE" != "" ]; then
+ZCMACROS="$rootdir/etc/$ZPLSOURCE/$ZCMACROSBASE"
+#echo "Checking for $ZCMACROS"
+if [ ! -f $ZCMACROS ]; then
+ZCMACROS=""
+fi
+fi
+
+#echo "ZCMACROS = $ZCMACROS"
+
+if [ "$ZCMACROS" = "" ]; then
+ZCMACROS="$rootdir/etc/$ZPLTARGET/$ZCMACROSBASE"
+#echo "Checking for $ZCMACROS"
+if [ ! -f $ZCMACROS ]; then
+ZCMACROS="$rootdir/etc/$ZCMACROSBASE"
+fi
+fi
+
+echo $ZCMACROS
+
+exit 0

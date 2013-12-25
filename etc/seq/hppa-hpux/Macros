@@ -1,0 +1,9 @@
+#
+# etc/seq/hp-ux/Macros - seq sparc-solaris Makefile macros
+#
+
+CC=${CC:-gcc}
+CCVER=${CCVER:-"gcc -v"}
+
+. $ZPLHOME/etc/seq/Macros
+

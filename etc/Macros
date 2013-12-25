@@ -1,0 +1,58 @@
+#
+# etc/Macros - default Makefile macros
+#
+
+CC=${CC:-cc}
+CCVER=${CCVER:-"cc -V"}
+LINK=${LINK:-$CC}
+CFLAGS=${CFLAGS:--O3}
+LFLAGS=${LFLAGS:-''}
+DEPEND=${DEPEND:-makedepend}
+ARC=${ARC:-"ar rc"}
+
+#
+# versions of the above for the bootstrap program
+#
+
+START_CC=${START_CC:-$CC}
+START_CCVER=${START_CCVER:-"$CC -V"}
+START_LINK=${START_LINK:-$LINK}
+START_CFLAGS=${START_CFLAGS:-$CFLAGS}
+START_LFLAGS=${START_LFLAGS:-$LFLAGS}
+
+
+#
+# for use when compiling the runtime system
+#
+
+MD_LIB_INCLS=${MD_LIB_INCLS-""}
+
+
+#
+# for use when compiling zc generated C source code
+#
+
+MD_LIBPATHS=${MD_LIBPATHS:-""}
+MD_LIBS=${MD_LIBS:-""}
+MD_INCLS=${MD_INCLS:-""}
+
+
+#
+# versions of the above for the bootstrap program
+#
+
+START_MD_INCLS=${START_MD_INCLS:-$MD_INCLS}
+START_MD_LIBPATHS=${START_MD_LIBPATHS:-$MD_LIBPATHS}
+START_MD_LIBS=${START_MD_LIBS:-$MD_LIBS}
+
+
+# which executable files should be created?
+
+FILE1=yes
+FILE2=yes
+FILE3=no
+
+
+MAKEDEPEND_PRE=${MAKEDEPEND_PRE-'makedepend -f Makefile.depend'}
+MAKEDEPEND_POST=${MAKEDEPEND_POST-""}
+

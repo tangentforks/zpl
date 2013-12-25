@@ -1,0 +1,6 @@
+include $(ZCROOTDIR)/etc/Makefile.Macros.gcc-base
+
+NOWARNFLAGS = -g
+WARNFLAGS = -Wall -Wstrict-prototypes -Wmissing-prototypes -Wmissing-declarations -Wnested-externs -Werror -pedantic-errors
+
+CFLAGS = $(NOWARNFLAGS) $(WARNFLAGS) -DRELEASE_VER=0

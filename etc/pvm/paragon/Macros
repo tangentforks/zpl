@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. $ZPLHOME/etc/pvm/Macros
+
+MD_LIBS="$MD_LIBS -lrpc"
+START_MD_LIBS="$START_MD_LIBS -lrpc"

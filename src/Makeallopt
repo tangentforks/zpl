@@ -1,0 +1,42 @@
+#!/bin/csh -f
+#
+# make all libraries up to date (seq, pvm, mpi-lam, mpi-mpich)
+#
+
+# setenv XXX_OLD_ZPLCOMMLAYER \$ZPLCOMMLAYER
+
+setenv ZPLCOMMLAYER seq
+./zmake clean
+cd seq
+./zmake clean
+./zmake
+cd ..
+./zmake
+
+setenv ZPLCOMMLAYER pvm
+./zmake clean
+cd pvm
+./zmake clean
+./zmake
+cd ..
+./zmake
+
+setenv ZPLCOMMLAYER mpi
+setenv ZPLMPITYPE lam
+./zmake clean
+cd mpi
+./zmake clean
+./zmake
+cd ..
+./zmake
+
+setenv ZPLMPITYPE mpich
+./zmake clean
+cd mpi
+./zmake clean
+./zmake
+cd ..
+./zmake
+
+# setenv ZPLCOMMLAYER \$XXX_OLD_ZPLCOMMLAYER
+# unsetenv XXX_OLD_ZPLCOMMLAYER

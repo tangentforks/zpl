@@ -1,0 +1,9 @@
+#
+# etc/shmem/Macros - shmem Makefile macros
+#
+
+MAKEDEPEND_PRE="cc -M"
+MAKEDEPEND_POST="> Makefile.depend"
+
+. $ZPLHOME/etc/shmem/Macros
+

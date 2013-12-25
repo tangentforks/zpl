@@ -1,0 +1,152 @@
+#!/bin/sh
+
+#
+# zmake.base - builds a zpl program
+#
+# This script modifies/sets ZPLSOURCE and ZPLCOMMLAYER and starts up
+# a machine specific Makefile to finish the compilation.  ZPLTARGET
+# and ZPLHOME must be set upon entry.
+#
+
+# quote all non-macro-definition args in string QARGS
+QARGS=""
+while [ $# -gt 0 ] ; do
+	echo $1 | grep "=" >/dev/null
+	if [ $? -ne 0 ] ; then
+	    QARGS="$QARGS \"$1\""
+	else
+	    # extract macro name and value and assign value to macro
+	    val=`echo $1 | sed "s/[^=]*=//"`
+	    var=`echo $1 | sed "s/=$val//"`
+	    eval $var=\"$val\"
+	fi
+	shift
+done
+
+# if ZPLSOURCE and ZPLTARGET are the same, ZPLSOURCE gets null-string
+if [ "$ZPLSOURCE" = "$ZPLTARGET" ] ; then
+	ZPLSOURCE=""
+fi
+
+# SOURCE is either $ZPLSOURCE (if it is nonnull) or $ZPLTARGET (otherwise)
+SOURCE=${ZPLSOURCE:-$ZPLTARGET}
+
+# ZPLHOME must be set to something
+if [ "$ZPLHOME" = "" ] ; then
+	echo "ERROR: Environment variable ZPLHOME must be set to ZPL home directory."
+	echo "Aborting."
+	exit 2
+fi
+
+# ZPLCOMMLAYER must be set to something
+if [ "$ZPLCOMMLAYER" = "" ] ; then
+	echo "ERROR: Environment variable ZPLCOMMLAYER must be set to communication API."
+	echo "Aborting."
+	exit 2
+fi
+
+# for ZPLCOMMLAYER=mpi check ZPLMPITYPE
+if [ "$ZPLCOMMLAYER" = "mpi" ] ; then
+# ZPLMPITYPE may or may not be set
+    if [ "$ZPLMPITYPE" = "" ] ; then
+	ZPLETCDIR=$ZPLCOMMLAYER
+    else
+	ZPLETCDIR="$ZPLCOMMLAYER-$ZPLMPITYPE"
+    fi
+else
+    ZPLETCDIR=$ZPLCOMMLAYER
+fi
+
+# ZPLTARGET must be set to something
+if [ "$ZPLTARGET" = "" ] ; then 
+	echo "ERROR: Environment variable ZPLTARGET must be set to target machine type."
+	echo "Aborting."
+	exit 2
+fi
+
+# this file contains platform specific macro defs
+MACROS="$ZPLHOME/etc/$ZPLETCDIR/$ZPLTARGET/$ZPLSOURCE/Macros"
+if [ ! -r "$MACROS" ] ; then
+	MACROS="$ZPLHOME/etc/$ZPLETCDIR/$ZPLTARGET/Macros"
+fi
+if [ ! -r "$MACROS" ] ; then
+	MACROS="$ZPLHOME/etc/$ZPLETCDIR/Macros"
+fi
+
+# file $MACROS must exist and be readable
+if [ ! -r "$MACROS" ] ; then
+	echo "ERROR: Unable to read macro file to compile on $SOURCE for $ZPLETCDIR/$ZPLTARGET."
+	echo "       ($MACROS)"
+	echo "       Make sure environment variables are properly set."
+	echo "Aborting."
+	exit 2
+fi
+
+# this is the Makefile that actually builds the binary (binaries)
+MAKEFILE="$ZPLHOME/etc/$ZPLETCDIR/$ZPLTARGET/$ZPLSOURCE/Makefile"
+if [ ! -r "$MAKEFILE" ] ; then
+	MAKEFILE="$ZPLHOME/etc/Makefile"
+fi
+
+# file $MAKEFILE must exist and be readable
+if [ ! -r "$MAKEFILE" ] ; then
+	echo "ERROR: Unable to read makefile to compile on $SOURCE for $ZPLETCDIR/$ZPLTARGET."
+	echo "       ($MAKEFILE)"
+	echo "       Make sure environment variables are properly set."
+	echo "Aborting."
+	exit 2
+fi
+
+if [ -r "$ZPLHOME/include/$ZPLCOMMLAYER/$ZPLTARGET" ] ; then
+	ZM_INCL="-\"I$ZPLHOME/include/$ZPLCOMMLAYER/$ZPLTARGET\""
+fi
+
+# indicate source and target platforms
+echo "Compiling on $SOURCE for $ZPLCOMMLAYER/$ZPLTARGET"
+
+. "$MACROS"
+
+export CC
+export LINK
+export CFLAGS
+export LFLAGS
+export DEPEND
+
+# next two only needed if we compile _cfg3.c
+export START_CC
+export START_CFLAGS
+export START_LINK
+export START_LFLAGS
+
+export MD_LIBPATHS
+export MD_LIBS
+export MD_INCLS
+
+export START_MD_INCLS
+export START_MD_LIBPATHS
+export START_MD_LIBS
+
+export FILE1
+export FILE2
+export FILE3
+
+export ZM_INCL
+
+export EXE_SUFFIX
+
+# export environment
+export ZPLSOURCE
+export ZPLETCDIR
+
+# call make
+COMMAND="make -f \"$MAKEFILE\" $QARGS ZPLHOME=\"$ZPLHOME\""
+eval "$COMMAND"
+
+if [ $? -gt 0 ]
+then
+	status=1
+else
+	status=0
+fi
+
+exit $status

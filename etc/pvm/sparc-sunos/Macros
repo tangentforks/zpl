@@ -1,0 +1,9 @@
+#
+# etc/pvm/sparc-sunos/Macros - pvm sparc-sunos Makefile macros
+#
+
+CC=${CC:-gcc}
+CCVER=${CCVER:-"gcc -v"}
+
+. $ZPLHOME/etc/pvm/Macros
+

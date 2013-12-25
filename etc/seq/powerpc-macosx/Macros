@@ -1,0 +1,6 @@
+#
+# etc/seq/powerpc-macosx/Macros - Makefile macros
+#
+
+ARC=${ARC:-"ar rcs"}
+. "$ZPLHOME/etc/seq/Macros"
